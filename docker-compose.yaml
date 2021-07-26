@@ -16,3 +16,40 @@ services:
     restart: always
     ports:
       - "8085:8080"
+
+  db:
+    image: postgres:9.6.18
+    restart: "no"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: postgres
+    ports:
+      - "5432:5432"
+  migrations-up:
+    image: postgres:9.6.18
+    restart: "no"
+    depends_on:
+      - "db"
+    environment:
+      PGHOST: db
+      PGPORT: 5432
+      PGUSER: postgres
+      PGPASSWORD: postgres
+    command: >
+      bash -c 'while !</dev/tcp/db/5432; do echo "waiting for db"; sleep 1; done; psql -c "
+      CREATE TABLE IF NOT EXISTS bookings (
+      	id                   varchar(255)  NOT NULL ,
+      	status               varchar(25)   NOT NULL ,
+      	status_reason        varchar(255)  NOT NULL ,
+      	first_name           varchar(255)  NOT NULL ,
+      	last_name            varchar(255)  NOT NULL ,
+      	gender               varchar(255)  NOT NULL ,
+      	birthday             date          NOT NULL ,
+      	launchpad_id         varchar(255)  NOT NULL ,
+      	destination_id       varchar(255)  NOT NULL ,
+      	launch_date          date          NOT NULL ,
+
+      	CONSTRAINT pk_booking_id PRIMARY KEY ( id )
+       );
+      "'
