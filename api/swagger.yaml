@@ -1,0 +1,186 @@
+openapi: 3.0.3
+info:
+  title: Space Trouble API
+  description: An OpenAPI definition for the Space Trouble API
+  version: v1
+servers:
+- url: http://localhost:8080/v1
+tags:
+- name: bookings
+  description: Bookings for the flights
+paths:
+  /bookings:
+    post:
+      tags:
+        - bookings
+      summary: Create a booking
+      operationId: createBooking
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Booking'
+        required: true
+      responses:
+        201:
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Booking'
+        400:
+          $ref: '#/components/responses/BadRequest'
+    get:
+      tags:
+        - bookings
+      summary: Gets a list of bookings
+      operationId: listBookings
+      parameters:
+        - $ref: '#/components/parameters/offset'
+        - $ref: '#/components/parameters/limit'
+      responses:
+        200:
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Booking'
+  /bookings/{bookingId}:
+    delete:
+      tags:
+        - bookings
+      summary: Delete a booking
+      operationId: deleteBooking
+      parameters:
+        - $ref: '#/components/parameters/bookingId'
+      responses:
+        204:
+          $ref: '#/components/responses/NoContent'
+        404:
+          $ref: '#/components/responses/NotFound'
+components:
+  schemas:
+    Booking:
+      type: object
+      required:
+        - id
+        - status
+        - firstName
+        - lastName
+        - gender
+        - birthday
+        - launchpadId
+        - destinationId
+        - launchDate
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+          title: ID of booking
+          example: e794d861-353b-4806-b6ac-7df4fdddb98f
+        status:
+          type: string
+          readOnly: true
+          title: Status of booking
+          enum:
+            - created
+            - pending
+            - declined
+            - approved
+          description: >
+            List of statuses:
+             * `created` - Booking has been created but not verified
+             * `pending` - Booking is under verification process
+             * `declined` - Verification of the booking has been finished with "declined" resolution (for example: it may related with overlap with SpaceX's launches)
+             * `approved` - Verification of the booking has been finished with "approved" resolution
+        statusReason:
+          type: string
+          readOnly: true
+          title: Reason of current status
+          description: For example - if current status is `declined`, field `statusReason` can talks about overlaping launches with SpaceX. For other statuses field will be empty
+          example: Launchpad at requested date already booked by SpaceX
+        firstName:
+          type: string
+          title: Passenger's first name
+          example: John
+        lastName:
+          type: string
+          title: Passenger's last name
+          example: Doe
+        gender:
+          type: string
+          title: Passenger's gender
+          example: male
+        birthday:
+          type: string
+          format: date
+          title: Passenger's birthday in UTC timezone
+          example: "1970-01-25"
+        launchpadId:
+          type: string
+          title: Launchpad's ID
+          description: You can find available launchpads over `GET https://api.spacexdata.com/v4/launchpads` API
+          example: 5e9e4501f5090910d4566f83
+        destinationId:
+          type: string
+          title: Landing pad's ID
+          description: You can find available landingpads over `GET https://api.spacexdata.com/v4/landpads` API
+          example: 5e9e3032383ecb267a34e7c7
+        launchDate:
+          type: string
+          format: date
+          title: Date of the launch in UTC timezone
+          example: "2021-09-25"
+    GeneralError:
+      type: object
+      properties:
+        error:
+          type: string
+          description: Error's details
+          example: Description of the error
+  parameters:
+    bookingId:
+      name: bookingId
+      in: path
+      description: ID of booking
+      required: true
+      schema:
+        type: string
+        format: uuid
+      example: e794d861-353b-4806-b6ac-7df4fdddb98f
+    offset:
+      name: offset
+      in: query
+      description: The number of items to skip before starting to collect the result set
+      required: false
+      schema:
+        type: integer
+        minimum: 0
+        default: 0
+    limit:
+      name: limit
+      in: query
+      description: The numbers of items to return
+      required: false
+      schema:
+        type: integer
+        minimum: 1
+        default: 20
+  responses:
+    NoContent:
+      description: Successful operation
+    NotFound:
+      description: Entity not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/GeneralError'
+    BadRequest:
+      description: Illegal input for operation
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/GeneralError'

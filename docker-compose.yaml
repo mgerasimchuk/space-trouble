@@ -1,0 +1,18 @@
+version: '3.4'
+
+services:
+  swagger-ui:
+    image: swaggerapi/swagger-ui:v3.51.1
+    environment:
+      - >
+        API_URLS=[
+           {
+               "name": "Space Trouble API",
+               "url": "/spec/swagger.yaml"
+           }
+        ]
+    volumes:
+      - ./api:/usr/share/nginx/html/spec
+    restart: always
+    ports:
+      - "8085:8080"
