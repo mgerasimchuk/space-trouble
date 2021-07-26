@@ -2,11 +2,13 @@ package main
 
 import (
 	"fmt"
+	"time"
 
 	"github.com/brianvoe/gofakeit/v6"
 	"github.com/google/uuid"
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/postgres"
+	"github.com/mgerasimchuk/space-trouble/internal/adapter/repository/api"
 	"github.com/mgerasimchuk/space-trouble/internal/adapter/repository/pg"
 	"github.com/mgerasimchuk/space-trouble/internal/domain/model"
 	"github.com/mgerasimchuk/space-trouble/internal/domain/repository"
@@ -25,8 +27,17 @@ func main() {
 	}
 
 	bookingRepo := pg.NewBookingRepository(db)
+	_ = bookingRepo
 
-	pgBookingRepo(bookingRepo)
+	launchpadRepo := api.NewLaunchpadRepository("https://api.spacexdata.com")
+	_  = launchpadRepo
+
+	landpadRepo := api.NewLandpadRepository("https://api.spacexdata.com")
+	_  = landpadRepo
+
+	//pgBookingRepo(bookingRepo)
+	//apiLaunchpadRepo(launchpadRepo)
+	//apiLandpadRepo(landpadRepo)
 }
 
 func pgBookingRepo(bookingRepo repository.BookingRepository) {
@@ -64,4 +75,38 @@ func pgBookingRepo(bookingRepo repository.BookingRepository) {
 	_ = bookingRepo.Delete(b2.ID())
 	bookings, err = bookingRepo.GetList(nil, nil, nil)
 	fmt.Printf("After Delete Second\nBookings: %#v\nError: %#v\n\n", bookings, err)
+}
+
+func apiLaunchpadRepo(launchpadRepo repository.LaunchpadRepository) {
+	for _, id := range []string{
+		"5e9e4501f5090910d4566f83-BAD", // bad
+		"5e9e4501f5090910d4566f83", // retired
+		"5e9e4502f509092b78566f87", // active - booked for "2021-12-31"
+		"5e9e4501f509094ba4566f84", // active - available for "2021-12-31"
+	} {
+		res, err := launchpadRepo.IsExists(id)
+		fmt.Printf("Launchpad ID: %#v IsExists: %#v Error: %#v\n", id, res, err)
+
+		res, err = launchpadRepo.IsActive(id)
+		fmt.Printf("Launchpad ID: %#v IsActive: %#v Error: %#v\n", id, res, err)
+
+		d := "2021-12-31"
+		t, _ := time.Parse("2006-01-02", d)
+		res, err = launchpadRepo.IsDateAvailableForLaunch(id, t)
+		fmt.Printf("Launchpad ID: %#v Date: %#v IsDateAvailableForLaunch: %#v Error: %#v\n\n", id, d, res, err)
+	}
+}
+
+func apiLandpadRepo(landpadRepo repository.LandpadRepository) {
+	for _, id := range []string{
+		"5e9e3032383ecb267a34e7c7-BAD", // bad
+		"5e9e3032383ecb267a34e7c7", // retired
+		"5e9e3032383ecb761634e7cb", // active
+	} {
+		res, err := landpadRepo.IsExists(id)
+		fmt.Printf("Landpad ID: %#v IsExists: %#v Error: %#v\n", id, res, err)
+
+		res, err = landpadRepo.IsActive(id)
+		fmt.Printf("Landpad ID: %#v IsActive: %#v Error: %#v\n\n", id, res, err)
+	}
 }
