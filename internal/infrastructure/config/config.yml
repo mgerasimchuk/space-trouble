@@ -10,7 +10,7 @@ log:
   level: 4
 
 db:
-  host: localhost
+  host: db
   port: 5432
   name: postgres
   user: postgres
