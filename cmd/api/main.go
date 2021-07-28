@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"os"
 	"os/signal"
+	"strconv"
 	"syscall"
 	"time"
 
@@ -16,6 +17,7 @@ import (
 	"github.com/mgerasimchuk/space-trouble/internal/adapter/repository/api"
 	"github.com/mgerasimchuk/space-trouble/internal/adapter/repository/pg"
 	"github.com/mgerasimchuk/space-trouble/internal/domain/service"
+	"github.com/mgerasimchuk/space-trouble/internal/infrastructure/config"
 	"github.com/mgerasimchuk/space-trouble/internal/usecase"
 	"github.com/mgerasimchuk/space-trouble/pkg/utils"
 	"github.com/sirupsen/logrus"
@@ -23,13 +25,15 @@ import (
 )
 
 func main() {
+	cfg := config.GetRootConfig()
+
 	logger := logrus.New()
 	logger.SetOutput(os.Stdout)
-	logger.SetLevel(logrus.TraceLevel) // TODO move to config
+	logger.SetLevel(logrus.Level(cfg.Log.Level))
 
 	dbConnectionString := fmt.Sprintf(
 		"host=%s port=%d user=%s dbname=%s password=%s sslmode=disable",
-		"localhost", 5432, "postgres", "postgres", "postgres", // TODO move to config
+		cfg.DB.Host, cfg.DB.Port, cfg.DB.User, cfg.DB.Name, cfg.DB.Password,
 	)
 	db, err := gorm.Open("postgres", dbConnectionString)
 	if err != nil {
@@ -37,13 +41,13 @@ func main() {
 	}
 
 	bookingRepo := pg.NewBookingRepository(db)
-	launchpadRepo := api.NewLaunchpadRepository("https://api.spacexdata.com") // TODO move to config
-	landpadRepo := api.NewLandpadRepository("https://api.spacexdata.com")     // TODO move to config
+	launchpadRepo := api.NewLaunchpadRepository(cfg.Launchpad.ApiBaseUri)
+	landpadRepo := api.NewLandpadRepository(cfg.Landpad.ApiBaseUri)
 	bookingService := service.NewBookingService(bookingRepo, launchpadRepo, landpadRepo)
 	bookingUsecase := usecase.NewBookingUsecase(bookingService, bookingRepo, logger)
 	bookingController := controller.NewBookingController(bookingUsecase, logger)
 
-	gin.SetMode(gin.DebugMode) // TODO move to config
+	gin.SetMode(cfg.HTTPServer.Mode)
 	router := gin.Default()
 	router.Use(ginlogrus.Logger(logger), gin.Recovery())
 	router.Use(utils.RequestLogger(logger))
@@ -53,7 +57,7 @@ func main() {
 	router.DELETE("/v1/bookings/:id", bookingController.DeleteBooking)
 
 	srv := &http.Server{
-		Addr:    ":8080", // TODO move to config
+		Addr:    ":" + strconv.Itoa(cfg.HTTPServer.Port),
 		Handler: router,
 	}
 

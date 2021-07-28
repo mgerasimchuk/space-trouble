@@ -10,6 +10,7 @@ import (
 
 	"github.com/jinzhu/gorm"
 	"github.com/mgerasimchuk/space-trouble/internal/adapter/repository/api"
+	"github.com/mgerasimchuk/space-trouble/internal/infrastructure/config"
 
 	_ "github.com/jinzhu/gorm/dialects/postgres"
 	"github.com/sirupsen/logrus"
@@ -22,13 +23,15 @@ import (
 const logDateTimeLayout = "2006-01-02 15:04:05"
 
 func main() {
+	cfg := config.GetRootConfig()
+
 	logger := logrus.New()
 	logger.SetOutput(os.Stdout)
-	logger.SetLevel(logrus.TraceLevel) // TODO move to config
+	logger.SetLevel(logrus.Level(cfg.Log.Level))
 
 	dbConnectionString := fmt.Sprintf(
 		"host=%s port=%d user=%s dbname=%s password=%s sslmode=disable",
-		"localhost", 5432, "postgres", "postgres", "postgres", // TODO move to config
+		cfg.DB.Host, cfg.DB.Port, cfg.DB.User, cfg.DB.Name, cfg.DB.Password,
 	)
 	db, err := gorm.Open("postgres", dbConnectionString)
 	if err != nil {
@@ -36,8 +39,8 @@ func main() {
 	}
 
 	bookingRepo := pg.NewBookingRepository(db)
-	launchpadRepo := api.NewLaunchpadRepository("https://api.spacexdata.com") // TODO move to config
-	landpadRepo := api.NewLandpadRepository("https://api.spacexdata.com")     // TODO move to config
+	launchpadRepo := api.NewLaunchpadRepository(cfg.Launchpad.ApiBaseUri)
+	landpadRepo := api.NewLandpadRepository(cfg.Landpad.ApiBaseUri)
 	bookingService := service.NewBookingService(bookingRepo, launchpadRepo, landpadRepo)
 	bookingUsecase := usecase.NewBookingUsecase(bookingService, bookingRepo, logger)
 
@@ -47,7 +50,7 @@ func main() {
 		}
 	}()
 
-	ticker := time.NewTicker(500 * time.Millisecond) // TODO move to config
+	ticker := time.NewTicker(time.Duration(cfg.Verifier.RunWorkersEveryMilliseconds * int(time.Millisecond)))
 	tickerDone := make(chan bool)
 	go func() {
 		for {
@@ -58,7 +61,7 @@ func main() {
 				logger.Debugf("[%s] Ticker triggered", t.Format(logDateTimeLayout))
 
 				wg := sync.WaitGroup{}
-				for i := 1; i < 10; i++ { // TODO move to config
+				for i := 1; i < cfg.Verifier.WorkersCount; i++ {
 					wg.Add(1)
 					go func() {
 						defer wg.Done()
