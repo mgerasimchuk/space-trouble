@@ -1,14 +1,91 @@
 # Space Trouble
 
+## Requirements
+
+* [Docker Engine](https://docs.docker.com/engine/) (tested on 20.10.7)
+* [Docker Compose](https://docs.docker.com/compose/) (tested on 1.29.2)
+* [Bash](https://www.gnu.org/software/bash/) (tested on 5.1.8)
+* [Make](https://www.gnu.org/software/make/) (tested on 3.81)
+* Available 8080 and 5432 ports
+
+## How to use
+
+**Run this command:**
+
+```
+make run
+```
+
+**After:**
+
+API doc: http://localhost:8085
+
+Send request over curl:
+
+```
+curl --location --request POST 'localhost:8080/v1/bookings' \
+--header 'Content-Type: application/json' \
+--data-raw '{
+  "firstName": "John",
+  "lastName": "Doe",
+  "gender": "male",
+  "birthday": "2021-01-31",
+  "launchpadId": "5e9e4501f509094ba4566f84",
+  "destinationId": "5e9e3032383ecb761634e7cb",
+  "launchDate": "2021-09-25"
+}'
+```
+
+```
+curl --location --request GET 'localhost:8080/v1/bookings'
+```
+
+```
+curl --location --request DELETE 'localhost:8080/v1/bookings/10227205-3628-4c94-a070-f5731c38b3e6'
+```
+
+See data in DB:
+
+```
+docker-compose run migrations-up bash -c 'psql -c "SELECT * FROM bookings"'
+```
+
+## Tests
+
+Run tests with generating html coverage report:
+
+```
+make test
+``` 
+
+After executing, you can open generated [cover.html](https://htmlpreview.github.io/?https://github.com/mgerasimchuk/space-trouble/blob/master/cover.html)
+file in browser for checking coverage
+
+## Configuration
+
+See config file: [internal/infrastructure/config/config.yml](internal/infrastructure/config/config.yml)
+
+This config file, mounts to docker containers automatically(without rebuild), when you run `make run-rebuild`
+
+## Details of realisation
+
+As an architectural approach was used
+- [The Clean Architecture](https://blog.cleancoder.com/uncle-bob/2012/08/13/the-clean-architecture.html)
+
+Some things for the project layout was taken from
+- [https://github.com/golang-standards/project-layout](https://github.com/golang-standards/project-layout)
+
 ## Original Technical Task Description
 
-Imagine it’s 2049 and you are working for a company called SpaceTrouble that sends people to different places in our solar system.
-You are not the only one working in this industry. Your biggest competitor is a less known company called SpaceX.
-Unfortunately you both share the same launchpads and you cannot launch your rockets from the same place on the same day.
-There is a list of available launchpads and your spaceships go to places like: Mars, Moon, Pluto, Asteroid Belt, Europa, Titan, Ganymede.
-Every day you change the destination for all the launchpads. Basically on every day of the week from the same launchpad has to be a “flight” to a different place.
+Imagine it’s 2049 and you are working for a company called SpaceTrouble that sends people to different places in our
+solar system. You are not the only one working in this industry. Your biggest competitor is a less known company called
+SpaceX. Unfortunately you both share the same launchpads and you cannot launch your rockets from the same place on the
+same day. There is a list of available launchpads and your spaceships go to places like: Mars, Moon, Pluto, Asteroid
+Belt, Europa, Titan, Ganymede. Every day you change the destination for all the launchpads. Basically on every day of
+the week from the same launchpad has to be a “flight” to a different place.
 
-Information about available launchpads and upcoming SpaceX launches you can find by SpaceX API: https://api.spacexdata.com/
+Information about available launchpads and upcoming SpaceX launches you can find by SpaceX
+API: https://api.spacexdata.com/
 
 Your task is to create an API that will let your consumers book tickets online.
 
