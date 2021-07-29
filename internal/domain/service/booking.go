@@ -54,7 +54,7 @@ func (s BookingService) VerifyBooking(b *model.Booking) error {
 	wg.Add(1)
 	go func() {
 		defer wg.Done()
-		isLandpadActive, isLandpadActiveErr = s.landpadRepo.IsExists(b.DestinationID())
+		isLandpadActive, isLandpadActiveErr = s.landpadRepo.IsActive(b.DestinationID())
 	}()
 	wg.Wait()
 
