@@ -1,6 +1,8 @@
-package service
+package usecase
 
 import (
+	"github.com/mgerasimchuk/space-trouble/internal/domain/service"
+	"github.com/pkg/errors"
 	"testing"
 	"time"
 
@@ -8,19 +10,13 @@ import (
 	"github.com/mgerasimchuk/space-trouble/internal/domain/model"
 	"github.com/mgerasimchuk/space-trouble/pkg/utils"
 
-	"github.com/pkg/errors"
-
 	"github.com/mgerasimchuk/space-trouble/internal/adapter/repository/mock"
 	"github.com/stretchr/testify/assert"
 )
 
-func TestBookingService_VerifyBooking(t *testing.T) {
+func TestBookingUsecase_VerifyBooking(t *testing.T) {
 	validBooking := model.CreateBooking(
 		"John", "Doe", "male", time.Now().Add(-300*time.Hour),
-		"5e9e4501f5090910d4566f83", "5e9e3032383ecb267a34e7c7", time.Now().Add(300*time.Hour),
-	)
-	invalidBooking := model.CreateBooking(
-		"", "Doe", "male", time.Now().Add(-300*time.Hour),
 		"5e9e4501f5090910d4566f83", "5e9e3032383ecb267a34e7c7", time.Now().Add(300*time.Hour),
 	)
 
@@ -78,15 +74,6 @@ func TestBookingService_VerifyBooking(t *testing.T) {
 		// Negative cases
 		{
 			args{
-				invalidBooking, nil,
-				launchpadIsExistsBollErrRes{true, nil}, launchpadIsActiveBollErrRes{true, nil},
-				launchpadIsDateAvailableForLaunchBollErrRes{true, nil},
-				landpadIsExistsBollErrRes{true, nil}, landpadIsActiveBollErrRes{true, nil},
-			},
-			want{model.StatusDeclined, invalidBooking.Validate().Error(), nil},
-		},
-		{
-			args{
 				validBooking, nil,
 				launchpadIsExistsBollErrRes{false, errors.New("no such host")}, launchpadIsActiveBollErrRes{true, nil},
 				launchpadIsDateAvailableForLaunchBollErrRes{true, nil},
@@ -96,57 +83,12 @@ func TestBookingService_VerifyBooking(t *testing.T) {
 		},
 		{
 			args{
-				validBooking, errors.New("incorrect SQL syntax"),
-				launchpadIsExistsBollErrRes{false, errors.New("no such host")}, launchpadIsActiveBollErrRes{true, nil},
-				launchpadIsDateAvailableForLaunchBollErrRes{true, nil},
-				landpadIsExistsBollErrRes{true, nil}, landpadIsActiveBollErrRes{true, nil},
-			},
-			want{model.StatusDeclined, "Unknown reason", errors.Wrap(errors.New("no such host"), "incorrect SQL syntax")},
-		},
-		{
-			args{
 				validBooking, nil,
 				launchpadIsExistsBollErrRes{false, nil}, launchpadIsActiveBollErrRes{true, nil},
 				launchpadIsDateAvailableForLaunchBollErrRes{true, nil},
 				landpadIsExistsBollErrRes{true, nil}, landpadIsActiveBollErrRes{true, nil},
 			},
-			want{model.StatusDeclined, "launchpad doesn't exists", nil},
-		},
-		{
-			args{
-				validBooking, nil,
-				launchpadIsExistsBollErrRes{true, nil}, launchpadIsActiveBollErrRes{false, nil},
-				launchpadIsDateAvailableForLaunchBollErrRes{true, nil},
-				landpadIsExistsBollErrRes{true, nil}, landpadIsActiveBollErrRes{true, nil},
-			},
-			want{model.StatusDeclined, "launchpad is not active", nil},
-		},
-		{
-			args{
-				validBooking, nil,
-				launchpadIsExistsBollErrRes{true, nil}, launchpadIsActiveBollErrRes{true, nil},
-				launchpadIsDateAvailableForLaunchBollErrRes{false, nil},
-				landpadIsExistsBollErrRes{true, nil}, landpadIsActiveBollErrRes{true, nil},
-			},
-			want{model.StatusDeclined, "booking date is not available", nil},
-		},
-		{
-			args{
-				validBooking, nil,
-				launchpadIsExistsBollErrRes{true, nil}, launchpadIsActiveBollErrRes{true, nil},
-				launchpadIsDateAvailableForLaunchBollErrRes{true, nil},
-				landpadIsExistsBollErrRes{false, nil}, landpadIsActiveBollErrRes{true, nil},
-			},
-			want{model.StatusDeclined, "landpad doesn't exists", nil},
-		},
-		{
-			args{
-				validBooking, nil,
-				launchpadIsExistsBollErrRes{true, nil}, launchpadIsActiveBollErrRes{true, nil},
-				launchpadIsDateAvailableForLaunchBollErrRes{true, nil},
-				landpadIsExistsBollErrRes{true, nil}, landpadIsActiveBollErrRes{false, nil},
-			},
-			want{model.StatusDeclined, "landpad is not active", nil},
+			want{model.StatusDeclined, "launchpad doesn't exists", errors.New("launchpad doesn't exists")},
 		},
 	}
 
@@ -157,6 +99,8 @@ func TestBookingService_VerifyBooking(t *testing.T) {
 			bookingRepo.EXPECT().Save(gomock.Any()).Do(func(b *model.Booking) {
 				gotBookingInSave = *b
 			}).Return(tt.args.bookingRepoSaveRes).AnyTimes()
+			b := *tt.args.booking
+			bookingRepo.EXPECT().GetAndModify(gomock.Any(), gomock.Any()).Return(&b, nil).AnyTimes()
 
 			launchpadRepo := mock.NewMockLaunchpadRepository(gomock.NewController(t))
 			launchpadRepo.EXPECT().IsExists(tt.args.booking.LaunchpadID()).
@@ -172,12 +116,17 @@ func TestBookingService_VerifyBooking(t *testing.T) {
 			landpadRepo.EXPECT().IsActive(tt.args.booking.DestinationID()).
 				Return(tt.args.landpadRepoIsActiveRes.res, tt.args.landpadRepoIsActiveRes.err).AnyTimes()
 
-			s := NewBookingService(bookingRepo, launchpadRepo, landpadRepo)
-			gotErr := s.VerifyBooking(tt.args.booking)
+			bookingVerifierSvc := service.NewBookingVerifierService()
+			bookingUC := NewBookingUsecase(bookingVerifierSvc, bookingRepo, launchpadRepo, landpadRepo)
+			gotErr := bookingUC.VerifyFirstAvailableBooking()
 
 			utils.EqualError(t, tt.want.err, gotErr)
-			assert.Equal(t, tt.want.status, gotBookingInSave.Status())
-			assert.Equal(t, tt.want.statusReason, gotBookingInSave.StatusReason())
+			assert.Equal(t, tt.want.status, b.Status())
+			assert.Equal(t, tt.want.statusReason, b.StatusReason())
+			if tt.want.err == nil {
+				assert.Equal(t, tt.want.status, gotBookingInSave.Status())
+				assert.Equal(t, tt.want.statusReason, gotBookingInSave.StatusReason())
+			}
 		})
 	}
 }

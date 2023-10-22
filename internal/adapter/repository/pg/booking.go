@@ -2,12 +2,11 @@ package pg
 
 import (
 	"fmt"
+	"github.com/mgerasimchuk/space-trouble/internal/usecase/repository"
 	"time"
 
 	"github.com/google/uuid"
 	"github.com/jinzhu/gorm"
-	"github.com/mgerasimchuk/space-trouble/internal/domain/repository"
-
 	"github.com/mgerasimchuk/space-trouble/internal/domain/model"
 )
 

@@ -41,8 +41,8 @@ func main() {
 	bookingRepo := pg.NewBookingRepository(db)
 	launchpadRepo := api.NewLaunchpadRepository(cfg.Launchpad.ApiBaseUri)
 	landpadRepo := api.NewLandpadRepository(cfg.Landpad.ApiBaseUri)
-	bookingService := service.NewBookingService(bookingRepo, launchpadRepo, landpadRepo)
-	bookingUsecase := usecase.NewBookingUsecase(bookingService, bookingRepo, logger)
+	bookingService := service.NewBookingVerifierService()
+	bookingUsecase := usecase.NewBookingUsecase(bookingService, bookingRepo, launchpadRepo, landpadRepo)
 
 	defer func() {
 		if r := recover(); r != nil {

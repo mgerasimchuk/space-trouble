@@ -1,130 +1,86 @@
 
 <!DOCTYPE html>
 <html>
-<head>
-        <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-        <title>model: Go Coverage Report</title>
-        <style>
-                body {
-                        background: black;
-                        color: rgb(80, 80, 80);
-                }
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<title>model: Go Coverage Report</title>
+		<style>
+			body {
+				background: black;
+				color: rgb(80, 80, 80);
+			}
+			body, pre, #legend span {
+				font-family: Menlo, monospace;
+				font-weight: bold;
+			}
+			#topbar {
+				background: black;
+				position: fixed;
+				top: 0; left: 0; right: 0;
+				height: 42px;
+				border-bottom: 1px solid rgb(80, 80, 80);
+			}
+			#content {
+				margin-top: 50px;
+			}
+			#nav, #legend {
+				float: left;
+				margin-left: 10px;
+			}
+			#legend {
+				margin-top: 12px;
+			}
+			#nav {
+				margin-top: 10px;
+			}
+			#legend span {
+				margin: 0 5px;
+			}
+			.cov0 { color: rgb(192, 0, 0) }
+.cov1 { color: rgb(128, 128, 128) }
+.cov2 { color: rgb(116, 140, 131) }
+.cov3 { color: rgb(104, 152, 134) }
+.cov4 { color: rgb(92, 164, 137) }
+.cov5 { color: rgb(80, 176, 140) }
+.cov6 { color: rgb(68, 188, 143) }
+.cov7 { color: rgb(56, 200, 146) }
+.cov8 { color: rgb(44, 212, 149) }
+.cov9 { color: rgb(32, 224, 152) }
+.cov10 { color: rgb(20, 236, 155) }
 
-                body, pre, #legend span {
-                        font-family: Menlo, monospace;
-                        font-weight: bold;
-                }
-
-                #topbar {
-                        background: black;
-                        position: fixed;
-                        top: 0;
-                        left: 0;
-                        right: 0;
-                        height: 42px;
-                        border-bottom: 1px solid rgb(80, 80, 80);
-                }
-
-                #content {
-                        margin-top: 50px;
-                }
-
-                #nav, #legend {
-                        float: left;
-                        margin-left: 10px;
-                }
-
-                #legend {
-                        margin-top: 12px;
-                }
-
-                #nav {
-                        margin-top: 10px;
-                }
-
-                #legend span {
-                        margin: 0 5px;
-                }
-
-                .cov0 {
-                        color: rgb(192, 0, 0)
-                }
-
-                .cov1 {
-                        color: rgb(128, 128, 128)
-                }
-
-                .cov2 {
-                        color: rgb(116, 140, 131)
-                }
-
-                .cov3 {
-                        color: rgb(104, 152, 134)
-                }
-
-                .cov4 {
-                        color: rgb(92, 164, 137)
-                }
-
-                .cov5 {
-                        color: rgb(80, 176, 140)
-                }
-
-                .cov6 {
-                        color: rgb(68, 188, 143)
-                }
-
-                .cov7 {
-                        color: rgb(56, 200, 146)
-                }
-
-                .cov8 {
-                        color: rgb(44, 212, 149)
-                }
-
-                .cov9 {
-                        color: rgb(32, 224, 152)
-                }
-
-                .cov10 {
-                        color: rgb(20, 236, 155)
-                }
-
-        </style>
-</head>
-<body>
-<div id="topbar">
-        <div id="nav">
-                <select id="files">
-
-                        <option value="file0">github.com/mgerasimchuk/space-trouble/internal/domain/model/booking.go
-                                (81.8%)
-                        </option>
-
-                        <option value="file1">github.com/mgerasimchuk/space-trouble/internal/domain/service/booking.go
-                                (100.0%)
-                        </option>
-
-                </select>
-        </div>
-        <div id="legend">
-                <span>not tracked</span>
-
-                <span class="cov0">no coverage</span>
-                <span class="cov1">low coverage</span>
-                <span class="cov2">*</span>
-                <span class="cov3">*</span>
-                <span class="cov4">*</span>
-                <span class="cov5">*</span>
-                <span class="cov6">*</span>
-                <span class="cov7">*</span>
-                <span class="cov8">*</span>
-                <span class="cov9">*</span>
-                <span class="cov10">high coverage</span>
-
-        </div>
-</div>
-<div id="content">
+		</style>
+	</head>
+	<body>
+		<div id="topbar">
+			<div id="nav">
+				<select id="files">
+				
+				<option value="file0">github.com/mgerasimchuk/space-trouble/internal/domain/model/booking.go (81.8%)</option>
+				
+				<option value="file1">github.com/mgerasimchuk/space-trouble/internal/domain/service/booking_verifier.go (100.0%)</option>
+				
+				<option value="file2">github.com/mgerasimchuk/space-trouble/internal/usecase/booking.go (56.0%)</option>
+				
+				</select>
+			</div>
+			<div id="legend">
+				<span>not tracked</span>
+			
+				<span class="cov0">no coverage</span>
+				<span class="cov1">low coverage</span>
+				<span class="cov2">*</span>
+				<span class="cov3">*</span>
+				<span class="cov4">*</span>
+				<span class="cov5">*</span>
+				<span class="cov6">*</span>
+				<span class="cov7">*</span>
+				<span class="cov8">*</span>
+				<span class="cov9">*</span>
+				<span class="cov10">high coverage</span>
+			
+			</div>
+		</div>
+		<div id="content">
 		
 		<pre class="file" id="file0" style="display: none">package model
 
@@ -153,8 +109,7 @@ type Booking struct {
         launchDate    time.Time
 }
 
-func CreateBooking(firstName, lastName, gender string, birthday time.Time, launchpadID, destinationID string, launchDate time.Time) *Booking <span
-                        class="cov9" title="8">{
+func CreateBooking(firstName, lastName, gender string, birthday time.Time, launchpadID, destinationID string, launchDate time.Time) *Booking <span class="cov9" title="8">{
         b := &amp;Booking{
                 firstName: firstName, lastName: lastName, gender: gender, birthday: birthday,
                 launchpadID: launchpadID, destinationID: destinationID, launchDate: launchDate,
@@ -164,8 +119,7 @@ func CreateBooking(firstName, lastName, gender string, birthday time.Time, launc
         return b
 }</span>
 
-func LoadBooking(id, status, statusReason, firstName, lastName, gender string, birthday time.Time, launchpadID, destinationID string, launchDate time.Time) *Booking <span
-                        class="cov1" title="1">{
+func LoadBooking(id, status, statusReason, firstName, lastName, gender string, birthday time.Time, launchpadID, destinationID string, launchDate time.Time) *Booking <span class="cov1" title="1">{
         b := &amp;Booking{
                 id: id, status: status, statusReason: statusReason, firstName: firstName, lastName: lastName, gender: gender,
                 birthday: birthday, launchpadID: launchpadID, destinationID: destinationID, launchDate: launchDate,
@@ -273,8 +227,7 @@ func (b Booking) Validate() error <span class="cov10" title="9">{
         <span class="cov6" title="4">if err := b.validateLaunchpadID(); err != nil </span><span class="cov1" title="1">{
                 return err
         }</span>
-        <span class="cov5" title="3">if err := b.validateDestinationID(); err != nil </span><span class="cov1"
-                                                                                                  title="1">{
+        <span class="cov5" title="3">if err := b.validateDestinationID(); err != nil </span><span class="cov1" title="1">{
                 return err
         }</span>
         <span class="cov3" title="2">if err := b.validateLaunchDate(); err != nil </span><span class="cov1" title="1">{
@@ -349,151 +302,203 @@ func (b Booking) validateLaunchDate() error <span class="cov3" title="2">{
         <span class="cov1" title="1">return nil</span>
 }
 </pre>
-
-        <pre class="file" id="file1" style="display: none">package service
+		
+		<pre class="file" id="file1" style="display: none">package service
 
 import (
-        "sync"
-
-        "github.com/pkg/errors"
-
         "github.com/mgerasimchuk/space-trouble/internal/domain/model"
-        "github.com/mgerasimchuk/space-trouble/internal/domain/repository"
+        "github.com/mgerasimchuk/space-trouble/internal/domain/service/dto"
+        "github.com/pkg/errors"
 )
 
-type BookingService struct {
-        bookingRepo   repository.BookingRepository
-        launchpadRepo repository.LaunchpadRepository
-        landpadRepo   repository.LandpadRepository
+type BookingVerifierService struct {
 }
 
-func NewBookingService(bookingRepo repository.BookingRepository, launchpadRepo repository.LaunchpadRepository, landpadRepo repository.LandpadRepository) *BookingService <span
-                        class="cov6" title="9">{
-        return &amp;BookingService{bookingRepo: bookingRepo, launchpadRepo: launchpadRepo, landpadRepo: landpadRepo}
+func NewBookingVerifierService() *BookingVerifierService <span class="cov1" title="1">{
+        return &amp;BookingVerifierService{}
 }</span>
 
-func (s BookingService) VerifyBooking(b *model.Booking) error <span class="cov6" title="9">{
-        if err := b.Validate(); err != nil </span><span class="cov1" title="1">{
+func (s BookingVerifierService) Verify(b *model.Booking, dto dto.BookingVerifyDTO) error <span class="cov10" title="6">{
+        if !dto.IsLaunchpadExists </span><span class="cov1" title="1">{
                 b.SetStatus(model.StatusDeclined)
+                err := errors.New("launchpad doesn't exists")
                 b.SetStatusReason(err.Error())
-
-                return s.bookingRepo.Save(b)
+                return err
         }</span>
-
-        <span class="cov6" title="8">var isLaunchpadExists, isLaunchpadActive, isDateAvailableForLaunch, isLandpadExists, isLandpadActive bool
-        var isLaunchpadExistsErr, isLaunchpadActiveErr, isDateAvailableForLaunchErr, isLandpadExistsErr, isLandpadActiveErr error
-
-        wg := sync.WaitGroup{}
-        wg.Add(1)
-        go func() </span><span class="cov6" title="8">{
-                defer wg.Done()
-                isLaunchpadExists, isLaunchpadExistsErr = s.launchpadRepo.IsExists(b.LaunchpadID())
-        }</span>()
-        <span class="cov6" title="8">wg.Add(1)
-        go func() </span><span class="cov6" title="8">{
-                defer wg.Done()
-                isLaunchpadActive, isLaunchpadActiveErr = s.launchpadRepo.IsActive(b.LaunchpadID())
-        }</span>()
-        <span class="cov6" title="8">wg.Add(1)
-        go func() </span><span class="cov6" title="8">{
-                defer wg.Done()
-                isDateAvailableForLaunch, isDateAvailableForLaunchErr = s.launchpadRepo.IsDateAvailableForLaunch(b.LaunchpadID(), b.LaunchDate())
-        }</span>()
-        <span class="cov6" title="8">wg.Add(1)
-        go func() </span><span class="cov6" title="8">{
-                defer wg.Done()
-                isLandpadExists, isLandpadExistsErr = s.landpadRepo.IsExists(b.DestinationID())
-        }</span>()
-        <span class="cov6" title="8">wg.Add(1)
-        go func() </span><span class="cov6" title="8">{
-                defer wg.Done()
-                isLandpadActive, isLandpadActiveErr = s.landpadRepo.IsActive(b.DestinationID())
-        }</span>()
-        <span class="cov6" title="8">wg.Wait()
-
-        for _, err := range []error{
-                isLaunchpadExistsErr, isLaunchpadActiveErr, isDateAvailableForLaunchErr, isLandpadExistsErr, isLandpadActiveErr,
-        } </span><span class="cov10" title="32">{
-                if err != nil </span><span class="cov2" title="2">{
-                        b.SetStatus(model.StatusDeclined)
-                        b.SetStatusReason("Unknown reason")
-                        saveErr := s.bookingRepo.Save(b)
-                        if saveErr != nil </span><span class="cov1" title="1">{
-                                err = errors.Wrap(err, saveErr.Error())
-                        }</span>
-
-                        <span class="cov2" title="2">return err</span>
-                }
-        }
-
-        <span class="cov5" title="6">if !isLaunchpadExists </span><span class="cov1" title="1">{
+        <span class="cov9" title="5">if !dto.IsLaunchpadActive </span><span class="cov1" title="1">{
                 b.SetStatus(model.StatusDeclined)
-                b.SetStatusReason("launchpad doesn't exists")
-
-                return s.bookingRepo.Save(b)
+                err := errors.New("launchpad is not active")
+                b.SetStatusReason(err.Error())
+                return err
         }</span>
-        <span class="cov5" title="5">if !isLaunchpadActive </span><span class="cov1" title="1">{
+        <span class="cov7" title="4">if !dto.IsDateAvailableForLaunch </span><span class="cov1" title="1">{
                 b.SetStatus(model.StatusDeclined)
-                b.SetStatusReason("launchpad is not active")
-
-                return s.bookingRepo.Save(b)
+                err := errors.New("booking date is not available")
+                b.SetStatusReason(err.Error())
+                return err
         }</span>
-        <span class="cov4" title="4">if !isDateAvailableForLaunch </span><span class="cov1" title="1">{
+        <span class="cov6" title="3">if !dto.IsLandpadExists </span><span class="cov1" title="1">{
                 b.SetStatus(model.StatusDeclined)
-                b.SetStatusReason("booking date is not available")
-
-                return s.bookingRepo.Save(b)
+                err := errors.New("landpad doesn't exists")
+                b.SetStatusReason(err.Error())
+                return err
         }</span>
-        <span class="cov3" title="3">if !isLandpadExists </span><span class="cov1" title="1">{
+        <span class="cov4" title="2">if !dto.IsLandpadActive </span><span class="cov1" title="1">{
                 b.SetStatus(model.StatusDeclined)
-                b.SetStatusReason("landpad doesn't exists")
-
-                return s.bookingRepo.Save(b)
-        }</span>
-        <span class="cov2" title="2">if !isLandpadActive </span><span class="cov1" title="1">{
-                b.SetStatus(model.StatusDeclined)
-                b.SetStatusReason("landpad is not active")
-
-                return s.bookingRepo.Save(b)
+                err := errors.New("landpad is not active")
+                b.SetStatusReason(err.Error())
+                return err
         }</span>
 
         <span class="cov1" title="1">b.SetStatus(model.StatusApproved)
         b.SetStatusReason("")
-
-        return s.bookingRepo.Save(b)</span>
+        return nil</span>
 }
 </pre>
+		
+		<pre class="file" id="file2" style="display: none">package usecase
 
-</div>
-</body>
-<script>
-        (function () {
-                var files = document.getElementById('files');
-                var visible;
-                files.addEventListener('change', onChange, false);
+import (
+        "errors"
+        "github.com/mgerasimchuk/space-trouble/internal/domain/service"
+        "github.com/mgerasimchuk/space-trouble/internal/domain/service/dto"
+        "github.com/mgerasimchuk/space-trouble/internal/usecase/repository"
+        "golang.org/x/sync/errgroup"
+        "time"
 
-                function select(part) {
-                        if (visible)
-                                visible.style.display = 'none';
-                        visible = document.getElementById(part);
-                        if (!visible)
-                                return;
-                        files.value = part;
-                        visible.style.display = 'block';
-                        location.hash = part;
-                }
+        "github.com/mgerasimchuk/space-trouble/internal/domain/model"
+)
 
-                function onChange() {
-                        select(files.value);
-                        window.scrollTo(0, 0);
-                }
+type BookingUsecase struct {
+        bookingVerifierSvc *service.BookingVerifierService
+        bookingRepo        repository.BookingRepository
+        launchpadRepo      repository.LaunchpadRepository
+        landpadRepo        repository.LandpadRepository
+}
 
-                if (location.hash != "") {
-                        select(location.hash.substr(1));
-                }
-                if (!visible) {
-                        select("file0");
-                }
-        })();
-</script>
+func NewBookingUsecase(bookingSvc *service.BookingVerifierService, bookingRepo repository.BookingRepository, launchpadRepo repository.LaunchpadRepository, landpadRepo repository.LandpadRepository) *BookingUsecase <span class="cov10" title="3">{
+        return &amp;BookingUsecase{bookingVerifierSvc: bookingSvc, bookingRepo: bookingRepo, launchpadRepo: launchpadRepo, landpadRepo: landpadRepo}
+}</span>
+
+var internalError = errors.New("internal error")
+
+func (u *BookingUsecase) CreateBooking(
+        firstName string, lastName string, gender string, birthday time.Time,
+        launchpadID string, destinationID string, launchDate time.Time,
+) (*model.Booking, error) <span class="cov0" title="0">{
+        b := model.CreateBooking(firstName, lastName, gender, birthday, launchpadID, destinationID, launchDate)
+        if err := b.Validate(); err != nil </span><span class="cov0" title="0">{
+                return nil, err
+        }</span>
+
+        <span class="cov0" title="0">b, err := u.bookingRepo.Create(b)
+        if err != nil </span><span class="cov0" title="0">{
+                return nil, internalError
+        }</span>
+
+        <span class="cov0" title="0">return b, nil</span>
+}
+
+func (u *BookingUsecase) GetBookings(limit, offset *int) ([]*model.Booking, error) <span class="cov0" title="0">{
+        if limit != nil &amp;&amp; *limit &lt; 1 </span><span class="cov0" title="0">{
+                return nil, errors.New("\"limit\" param should be greater than 1")
+        }</span>
+        <span class="cov0" title="0">if offset != nil &amp;&amp; *offset &lt; 0 </span><span class="cov0" title="0">{
+                return nil, errors.New("\"offset\" param should be greater or equal 0")
+        }</span>
+
+        <span class="cov0" title="0">bookings, err := u.bookingRepo.GetList(nil, limit, offset)
+        if err != nil </span><span class="cov0" title="0">{
+                return nil, internalError
+        }</span>
+
+        <span class="cov0" title="0">return bookings, nil</span>
+}
+
+func (u *BookingUsecase) DeleteBooking(id string) error <span class="cov0" title="0">{
+        if id == "" </span><span class="cov0" title="0">{
+                return errors.New("\"id\" can't be empty")
+        }</span>
+
+        <span class="cov0" title="0">err := u.bookingRepo.Delete(id)
+        if err != nil </span><span class="cov0" title="0">{
+                return internalError
+        }</span>
+
+        <span class="cov0" title="0">return nil</span>
+}
+
+func (u *BookingUsecase) VerifyFirstAvailableBooking() error <span class="cov10" title="3">{
+        b, err := u.bookingRepo.GetAndModify(model.StatusCreated, model.StatusPending)
+        if err != nil </span><span class="cov0" title="0">{
+                return err
+        }</span>
+
+        <span class="cov10" title="3">bookingVerifyDTO := dto.BookingVerifyDTO{}
+        g := errgroup.Group{}
+        g.Go(func() (err error) </span><span class="cov10" title="3">{
+                bookingVerifyDTO.IsLaunchpadExists, err = u.launchpadRepo.IsExists(b.LaunchpadID())
+                return err
+        }</span>)
+        <span class="cov10" title="3">g.Go(func() (err error) </span><span class="cov10" title="3">{
+                bookingVerifyDTO.IsLaunchpadActive, err = u.launchpadRepo.IsActive(b.LaunchpadID())
+                return err
+        }</span>)
+        <span class="cov10" title="3">g.Go(func() (err error) </span><span class="cov10" title="3">{
+                bookingVerifyDTO.IsDateAvailableForLaunch, err = u.launchpadRepo.IsDateAvailableForLaunch(b.LaunchpadID(), b.LaunchDate())
+                return err
+        }</span>)
+        <span class="cov10" title="3">g.Go(func() (err error) </span><span class="cov10" title="3">{
+                bookingVerifyDTO.IsLandpadExists, err = u.landpadRepo.IsExists(b.DestinationID())
+                return err
+        }</span>)
+        <span class="cov10" title="3">g.Go(func() (err error) </span><span class="cov10" title="3">{
+                bookingVerifyDTO.IsLandpadActive, err = u.landpadRepo.IsActive(b.DestinationID())
+                return err
+        }</span>)
+
+        <span class="cov10" title="3">if err = g.Wait(); err != nil </span><span class="cov1" title="1">{
+                b.SetStatus(model.StatusDeclined)
+                b.SetStatusReason("Unknown reason") // hide errors from the adapters layer
+                return err
+        }</span>
+
+        <span class="cov6" title="2">err = u.bookingVerifierSvc.Verify(b, bookingVerifyDTO)
+        if err != nil </span><span class="cov1" title="1">{
+                return err
+        }</span>
+
+        <span class="cov1" title="1">return u.bookingRepo.Save(b)</span>
+}
+</pre>
+		
+		</div>
+	</body>
+	<script>
+	(function() {
+		var files = document.getElementById('files');
+		var visible;
+		files.addEventListener('change', onChange, false);
+		function select(part) {
+			if (visible)
+				visible.style.display = 'none';
+			visible = document.getElementById(part);
+			if (!visible)
+				return;
+			files.value = part;
+			visible.style.display = 'block';
+			location.hash = part;
+		}
+		function onChange() {
+			select(files.value);
+			window.scrollTo(0, 0);
+		}
+		if (location.hash != "") {
+			select(location.hash.substr(1));
+		}
+		if (!visible) {
+			select("file0");
+		}
+	})();
+	</script>
 </html>

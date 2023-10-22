@@ -2,25 +2,27 @@ package usecase
 
 import (
 	"errors"
+	"github.com/mgerasimchuk/space-trouble/internal/domain/service"
+	"github.com/mgerasimchuk/space-trouble/internal/domain/service/dto"
+	"github.com/mgerasimchuk/space-trouble/internal/usecase/repository"
+	"golang.org/x/sync/errgroup"
 	"time"
 
 	"github.com/mgerasimchuk/space-trouble/internal/domain/model"
-	"github.com/mgerasimchuk/space-trouble/internal/domain/repository"
-	"github.com/mgerasimchuk/space-trouble/internal/domain/service"
-	"github.com/sirupsen/logrus"
 )
 
 type BookingUsecase struct {
-	bookingService *service.BookingService
-	bookingRepo    repository.BookingRepository
-	logger         *logrus.Logger
+	bookingVerifierSvc *service.BookingVerifierService
+	bookingRepo        repository.BookingRepository
+	launchpadRepo      repository.LaunchpadRepository
+	landpadRepo        repository.LandpadRepository
+}
+
+func NewBookingUsecase(bookingSvc *service.BookingVerifierService, bookingRepo repository.BookingRepository, launchpadRepo repository.LaunchpadRepository, landpadRepo repository.LandpadRepository) *BookingUsecase {
+	return &BookingUsecase{bookingVerifierSvc: bookingSvc, bookingRepo: bookingRepo, launchpadRepo: launchpadRepo, landpadRepo: landpadRepo}
 }
 
 var internalError = errors.New("internal error")
-
-func NewBookingUsecase(bookingService *service.BookingService, bookingRepo repository.BookingRepository, logger *logrus.Logger) *BookingUsecase {
-	return &BookingUsecase{bookingService: bookingService, bookingRepo: bookingRepo, logger: logger}
-}
 
 func (u *BookingUsecase) CreateBooking(
 	firstName string, lastName string, gender string, birthday time.Time,
@@ -33,8 +35,6 @@ func (u *BookingUsecase) CreateBooking(
 
 	b, err := u.bookingRepo.Create(b)
 	if err != nil {
-		u.logger.Error(err)
-
 		return nil, internalError
 	}
 
@@ -51,8 +51,6 @@ func (u *BookingUsecase) GetBookings(limit, offset *int) ([]*model.Booking, erro
 
 	bookings, err := u.bookingRepo.GetList(nil, limit, offset)
 	if err != nil {
-		u.logger.Error(err)
-
 		return nil, internalError
 	}
 
@@ -66,30 +64,51 @@ func (u *BookingUsecase) DeleteBooking(id string) error {
 
 	err := u.bookingRepo.Delete(id)
 	if err != nil {
-		u.logger.Error(err)
-
 		return internalError
 	}
 
 	return nil
 }
 
-func (u *BookingUsecase) VerifyFirstAvailableBooking() {
+func (u *BookingUsecase) VerifyFirstAvailableBooking() error {
 	b, err := u.bookingRepo.GetAndModify(model.StatusCreated, model.StatusPending)
 	if err != nil {
-		u.logger.Error(err)
-
-		return
+		return err
 	}
 
-	if b == nil {
-		return
+	bookingVerifyDTO := dto.BookingVerifyDTO{}
+	g := errgroup.Group{}
+	g.Go(func() (err error) {
+		bookingVerifyDTO.IsLaunchpadExists, err = u.launchpadRepo.IsExists(b.LaunchpadID())
+		return err
+	})
+	g.Go(func() (err error) {
+		bookingVerifyDTO.IsLaunchpadActive, err = u.launchpadRepo.IsActive(b.LaunchpadID())
+		return err
+	})
+	g.Go(func() (err error) {
+		bookingVerifyDTO.IsDateAvailableForLaunch, err = u.launchpadRepo.IsDateAvailableForLaunch(b.LaunchpadID(), b.LaunchDate())
+		return err
+	})
+	g.Go(func() (err error) {
+		bookingVerifyDTO.IsLandpadExists, err = u.landpadRepo.IsExists(b.DestinationID())
+		return err
+	})
+	g.Go(func() (err error) {
+		bookingVerifyDTO.IsLandpadActive, err = u.landpadRepo.IsActive(b.DestinationID())
+		return err
+	})
+
+	if err = g.Wait(); err != nil {
+		b.SetStatus(model.StatusDeclined)
+		b.SetStatusReason("Unknown reason") // hide errors from the adapters layer
+		return err
 	}
 
-	err = u.bookingService.VerifyBooking(b)
+	err = u.bookingVerifierSvc.Verify(b, bookingVerifyDTO)
 	if err != nil {
-		u.logger.Error(err)
-
-		return
+		return err
 	}
+
+	return u.bookingRepo.Save(b)
 }
