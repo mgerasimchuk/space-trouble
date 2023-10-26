@@ -13,6 +13,8 @@ logs-verifier:
 	docker-compose -f ${DOCKER_COMPOSE_FILENAME} logs -f verifier
 test:
 	docker run -v $(shell pwd):/app golang:1.20.0 /bin/bash -c 'cd /app && GO111MODULE=on go test -mod vendor -covermode=count -coverprofile=assets/coverage/coverage.out -v ./... && go tool cover -html=assets/coverage/coverage.out -o=assets/coverage/coverage.html'
+test-integration-api:
+	docker-compose -f ${DOCKER_COMPOSE_FILENAME} run test-integration-api
 lint-architecture:
 	docker run --rm -v $(shell pwd):/app -w /app golang:1.20.0 /bin/bash -c "go install github.com/fdaines/arch-go@v1.4.2 && arch-go -v"
 vendor-install:

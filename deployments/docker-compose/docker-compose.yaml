@@ -2,9 +2,7 @@ version: '3.4'
 
 services:
   api:
-    build:
-      context: ./../..
-      dockerfile: ./docker/api/Dockerfile
+    image: golang:1.20.0
     restart: "no"
     env_file:
       - ./../../deployments/docker-compose/.env
@@ -16,9 +14,7 @@ services:
       - "8080:8080"
     entrypoint: bash -c 'while !</dev/tcp/db/5432; do sleep 1; done; go run /app/cmd/api/main.go'
   verifier:
-    build:
-      context: ./../..
-      dockerfile: ./docker/verifier/Dockerfile
+    image: golang:1.20.0
     restart: "no"
     env_file:
       - ./../../deployments/docker-compose/.env
@@ -78,3 +74,14 @@ services:
       	CONSTRAINT pk_booking_id PRIMARY KEY ( id )
        );
       "'
+  # integration tests (manual start)
+  test-integration-api:
+    image: golang:1.20.0
+    profiles:
+      - donotstart
+    working_dir: /app
+    environment:
+      SERVER_URL: "http://api:8080"
+    volumes:
+      - ./../../:/app
+    entrypoint: "/bin/bash -c 'go test -count=1 -v ./test/integration/api'"
