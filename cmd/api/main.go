@@ -72,7 +72,7 @@ func main() {
 	logger.Infof("Application has been started")
 
 	// Wait for interrupting signal to gracefully shutdown the server with  a 5 seconds timeout
-	quit := make(chan os.Signal)
+	quit := make(chan os.Signal, 1)
 	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
 	<-quit
 	logger.Info("Shutting down server...")

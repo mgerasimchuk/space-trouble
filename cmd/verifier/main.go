@@ -67,7 +67,10 @@ func main() {
 					wg.Add(1)
 					go func() {
 						defer wg.Done()
-						bookingUsecase.VerifyFirstAvailableBooking()
+						err = bookingUsecase.VerifyFirstAvailableBooking()
+						if err != nil {
+							logger.Error(err)
+						}
 					}()
 				}
 				wg.Wait()
@@ -78,7 +81,7 @@ func main() {
 	logger.Infof("Application has been started")
 
 	// Wait for interrupting signal to gracefully shutdown the server with a 5 seconds timeout
-	quit := make(chan os.Signal)
+	quit := make(chan os.Signal, 1)
 	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
 	<-quit
 

@@ -63,19 +63,18 @@ func Test_Bookings_Full_Flow__Success(t *testing.T) {
 		"destinationId": "5e9e3032383ecb761634e7cb",
 		"launchDate":    time.Now().Add(24 * time.Hour).Format(time.DateOnly),
 	}
-	resp := e.POST("/v1/bookings").
+	booking := e.POST("/v1/bookings").
 		WithJSON(req).
 		Expect().
 		Status(http.StatusCreated).
 		JSON().Object()
 
 	for _, k := range []string{"id", "status", "statusReason"} {
-		resp.ContainsKey(k)
+		booking.ContainsKey(k)
 	}
 	for k, v := range req {
-		resp.Value(k).IsEqual(v)
+		booking.Value(k).IsEqual(v)
 	}
-	booking := *resp
 
 	// Get bookings
 	e.GET("/v1/bookings").

@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"log"
 	"net/http"
 	"time"
@@ -58,7 +58,7 @@ func (r *LaunchpadRepository) IsDateAvailableForLaunch(launchpadID string, launc
 		return false, fmt.Errorf("got unexpected http status code: %d", resp.StatusCode)
 	}
 
-	body, err := ioutil.ReadAll(resp.Body)
+	body, err := io.ReadAll(resp.Body)
 	if err != nil {
 		log.Fatalln(err)
 	}
@@ -84,7 +84,7 @@ func (r *LaunchpadRepository) getLaunchpad(id string) (lp *launchpad, statusCode
 		return nil, resp.StatusCode, fmt.Errorf("got unexpected http status code: %d", resp.StatusCode)
 	}
 
-	body, err := ioutil.ReadAll(resp.Body)
+	body, err := io.ReadAll(resp.Body)
 	if err != nil {
 		log.Fatalln(err)
 	}
@@ -99,7 +99,7 @@ func (r *LaunchpadRepository) getLaunchpad(id string) (lp *launchpad, statusCode
 }
 
 type launchpad struct {
-	Status   string
+	Status string
 }
 
 type launchesQueryResult struct {

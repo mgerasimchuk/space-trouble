@@ -1,3 +1,8 @@
+[![Lint Golangci][lint-golangci-badge]][lint-golangci-url]
+[![Lint Architecture][lint-architecture-badge]][lint-architecture-url]
+[![Test Unit][test-unit-badge]][test-unit-url]
+[![Test Integration][test-integration-badge]][test-integration-url]
+
 # Space Trouble
 
 ## Requirements
@@ -52,14 +57,36 @@ docker-compose -f deployments/docker-compose/docker-compose.yaml run migrations-
 
 ## Tests
 
+### Unit
+
 Run tests with generating html coverage report:
 
 ```
-make test
+make test-unit
 ``` 
 
 After executing, you can open generated [assets/coverage/coverage.html](https://htmlpreview.github.io/?https://raw.githubusercontent.com/mgerasimchuk/space-trouble/master/assets/coverage/coverage.html)
 file in browser for checking coverage
+
+### Integration
+
+```
+make test-integration
+```
+
+## Linters
+
+### Golangci
+
+```
+make lint-golangci
+``` 
+
+### Architecture
+
+```
+make lint-architecture
+```
 
 ## Configuration
 
@@ -117,3 +144,12 @@ Technical requirements:
 * Please, use github or bitbucket.
 
 * Commit your changes often. Do not push the whole project in one commit.
+
+[lint-golangci-badge]: https://github.com/mgerasimchuk/space-trouble/actions/workflows/lint-golangci.yml/badge.svg
+[lint-golangci-url]: https://github.com/mgerasimchuk/space-trouble/actions/workflows/lint-golangci.yml
+[lint-architecture-badge]: https://github.com/mgerasimchuk/space-trouble/actions/workflows/lint-architecture.yml/badge.svg
+[lint-architecture-url]: https://github.com/mgerasimchuk/space-trouble/actions/workflows/lint-architecture.yml
+[test-unit-badge]: https://github.com/mgerasimchuk/space-trouble/actions/workflows/test-unit.yml/badge.svg
+[test-unit-url]: https://github.com/mgerasimchuk/space-trouble/actions/workflows/test-unit.yml
+[test-integration-badge]: https://github.com/mgerasimchuk/space-trouble/actions/workflows/test-integration.yml/badge.svg
+[test-integration-url]: https://github.com/mgerasimchuk/space-trouble/actions/workflows/test-integration.yml

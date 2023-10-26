@@ -38,6 +38,7 @@ func TestBookingService_VerifyBooking(t *testing.T) {
 		{
 			args{
 				validBooking, nil,
+				// nolint:govet // ignore unkeyed fields notice
 				dto.BookingVerifyDTO{true, true, true, true, true},
 			},
 			want{entity.StatusApproved, nil},
@@ -47,6 +48,7 @@ func TestBookingService_VerifyBooking(t *testing.T) {
 		{
 			args{
 				validBooking, nil,
+				// nolint:govet // ignore unkeyed fields notice
 				dto.BookingVerifyDTO{false, true, true, true, true},
 			},
 			want{entity.StatusDeclined, errors.New("launchpad doesn't exists")},
@@ -54,6 +56,7 @@ func TestBookingService_VerifyBooking(t *testing.T) {
 		{
 			args{
 				validBooking, nil,
+				// nolint:govet // ignore unkeyed fields notice
 				dto.BookingVerifyDTO{true, false, true, true, true},
 			},
 			want{entity.StatusDeclined, errors.New("launchpad is not active")},
@@ -61,6 +64,7 @@ func TestBookingService_VerifyBooking(t *testing.T) {
 		{
 			args{
 				validBooking, nil,
+				// nolint:govet // ignore unkeyed fields notice
 				dto.BookingVerifyDTO{true, true, false, true, true},
 			},
 			want{entity.StatusDeclined, errors.New("booking date is not available")},
@@ -68,6 +72,7 @@ func TestBookingService_VerifyBooking(t *testing.T) {
 		{
 			args{
 				validBooking, nil,
+				// nolint:govet // ignore unkeyed fields notice
 				dto.BookingVerifyDTO{true, true, true, false, true},
 			},
 			want{entity.StatusDeclined, errors.New("landpad doesn't exists")},
@@ -75,6 +80,7 @@ func TestBookingService_VerifyBooking(t *testing.T) {
 		{
 			args{
 				validBooking, nil,
+				// nolint:govet // ignore unkeyed fields notice
 				dto.BookingVerifyDTO{true, true, true, true, false},
 			},
 			want{entity.StatusDeclined, errors.New("landpad is not active")},

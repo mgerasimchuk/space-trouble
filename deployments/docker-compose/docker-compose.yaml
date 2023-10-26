@@ -4,10 +4,11 @@ services:
   api:
     image: golang:1.20.0
     restart: "no"
-    env_file:
-      - ./../../deployments/docker-compose/.env
     depends_on:
       - "db"
+    env_file:
+      - ./../../deployments/docker-compose/.env
+    working_dir: /app
     volumes:
       - ./../../:/app
     ports:
@@ -16,10 +17,11 @@ services:
   verifier:
     image: golang:1.20.0
     restart: "no"
-    env_file:
-      - ./../../deployments/docker-compose/.env
     depends_on:
       - "db"
+    env_file:
+      - ./../../deployments/docker-compose/.env
+    working_dir: /app
     volumes:
       - ./../../:/app
     entrypoint: bash -c 'while !</dev/tcp/db/5432; do sleep 1; done; go run /app/cmd/verifier/main.go'
@@ -84,4 +86,9 @@ services:
       SERVER_URL: "http://api:8080"
     volumes:
       - ./../../:/app
-    entrypoint: "/bin/bash -c 'go test -count=1 -v ./test/integration/api'"
+    entrypoint: |
+      /bin/bash -c 'until $$(curl --output /dev/null --silent --fail $$SERVER_URL/v1/bookings); do \
+      ((att++)) && ((att==100)) && echo "waiting timeout" && exit 255;\
+      printf '.'; sleep 1;\
+      done &&\
+      go test -count=1 -v ./test/integration/api'

@@ -3,7 +3,7 @@ package api
 import (
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"log"
 	"net/http"
 )
@@ -50,7 +50,7 @@ func (r *LandpadRepository) getLandpad(id string) (lp *landpad, statusCode int, 
 		return nil, resp.StatusCode, fmt.Errorf("got unexpected http status code: %d", resp.StatusCode)
 	}
 
-	body, err := ioutil.ReadAll(resp.Body)
+	body, err := io.ReadAll(resp.Body)
 	if err != nil {
 		log.Fatalln(err)
 	}
