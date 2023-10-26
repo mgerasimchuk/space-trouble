@@ -31,6 +31,8 @@ func main() {
 	logger.SetOutput(os.Stdout)
 	logger.SetLevel(logrus.Level(cfg.Log.Level))
 
+	logger.Info("Application starting...")
+
 	dbConnectionString := fmt.Sprintf(
 		"host=%s port=%d user=%s dbname=%s password=%s sslmode=disable",
 		cfg.DB.Host, cfg.DB.Port, cfg.DB.User, cfg.DB.Name, cfg.DB.Password,
@@ -66,6 +68,8 @@ func main() {
 			logger.Fatalf("listen: %s\n", err)
 		}
 	}()
+
+	logger.Infof("Application has been started")
 
 	// Wait for interrupting signal to gracefully shutdown the server with  a 5 seconds timeout
 	quit := make(chan os.Signal)

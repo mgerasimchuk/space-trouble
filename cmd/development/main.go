@@ -3,7 +3,7 @@ package main
 import (
 	"fmt"
 	"github.com/mgerasimchuk/space-trouble/internal/entity"
-	repository2 "github.com/mgerasimchuk/space-trouble/internal/usecase/repository"
+	"github.com/mgerasimchuk/space-trouble/internal/usecase/repository"
 	"os"
 	"time"
 
@@ -53,7 +53,7 @@ func main() {
 	examplesBookingUsecase(bookingUsecase)
 }
 
-func examplesBookingRepo(bookingRepo repository2.BookingRepository) {
+func examplesBookingRepo(bookingRepo repository.BookingRepository) {
 	p := gofakeit.Person()
 	b1 := entity.CreateBooking(p.FirstName, p.LastName, p.Gender, gofakeit.Date(), uuid.New().String(), uuid.New().String(), gofakeit.Date())
 	b1, err := bookingRepo.Create(b1)
@@ -90,7 +90,7 @@ func examplesBookingRepo(bookingRepo repository2.BookingRepository) {
 	fmt.Printf("After Delete Second\nBookings: %#v\nError: %#v\n\n", bookings, err)
 }
 
-func examplesLaunchpadRepo(launchpadRepo repository2.LaunchpadRepository) {
+func examplesLaunchpadRepo(launchpadRepo repository.LaunchpadRepository) {
 	for _, id := range []string{
 		"5e9e4501f5090910d4566f83-BAD", // bad
 		"5e9e4501f5090910d4566f83",     // retired
@@ -110,7 +110,7 @@ func examplesLaunchpadRepo(launchpadRepo repository2.LaunchpadRepository) {
 	}
 }
 
-func examplesLandpadRepo(landpadRepo repository2.LandpadRepository) {
+func examplesLandpadRepo(landpadRepo repository.LandpadRepository) {
 	for _, id := range []string{
 		"5e9e3032383ecb267a34e7c7-BAD", // bad
 		"5e9e3032383ecb267a34e7c7",     // retired

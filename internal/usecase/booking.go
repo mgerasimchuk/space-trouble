@@ -74,6 +74,9 @@ func (u *BookingUsecase) VerifyFirstAvailableBooking() error {
 	if err != nil {
 		return err
 	}
+	if b == nil {
+		return nil
+	}
 
 	bookingVerifyDTO := dto.BookingVerifyDTO{}
 	g := errgroup.Group{}

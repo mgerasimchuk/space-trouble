@@ -13,7 +13,7 @@
 **Run this command:**
 
 ```
-make run
+make start
 ```
 
 **After:**
@@ -47,7 +47,7 @@ curl --location --request DELETE 'localhost:8080/v1/bookings/10227205-3628-4c94-
 See data in DB:
 
 ```
-docker-compose run migrations-up bash -c 'psql -c "SELECT * FROM bookings"'
+docker-compose -f deployments/docker-compose/docker-compose.yaml run migrations-up bash -c 'psql -c "SELECT * FROM bookings"'
 ```
 
 ## Tests
@@ -58,22 +58,19 @@ Run tests with generating html coverage report:
 make test
 ``` 
 
-After executing, you can open generated [cover.html](https://htmlpreview.github.io/?https://github.com/mgerasimchuk/space-trouble/blob/master/cover.html)
+After executing, you can open generated [assets/coverage/coverage.html](https://htmlpreview.github.io/?https://raw.githubusercontent.com/mgerasimchuk/space-trouble/master/assets/coverage/coverage.html)
 file in browser for checking coverage
 
 ## Configuration
 
-See config file: [internal/infrastructure/config/config.yml](internal/infrastructure/config/config.yml)
-
-This config file, mounts to docker containers automatically(without rebuild), when you run `make run-rebuild`
+See env file: [deployments/docker-compose/.env](deployments/docker-compose/.env)
 
 ## Details of realisation
 
 As an architectural approach was used
 - [The Clean Architecture](https://blog.cleancoder.com/uncle-bob/2012/08/13/the-clean-architecture.html)
 
-Some things for the project layout was taken from
-- [https://github.com/golang-standards/project-layout](https://github.com/golang-standards/project-layout)
+The project layout follows [https://github.com/golang-standards/project-layout](https://github.com/golang-standards/project-layout)
 
 ## Original Technical Task Description
 

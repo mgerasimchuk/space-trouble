@@ -59,7 +59,7 @@
 				
 				<option value="file1">github.com/mgerasimchuk/space-trouble/internal/entity/service/booking_verifier.go (100.0%)</option>
 				
-				<option value="file2">github.com/mgerasimchuk/space-trouble/internal/usecase/booking.go (56.0%)</option>
+				<option value="file2">github.com/mgerasimchuk/space-trouble/internal/usecase/booking.go (55.8%)</option>
 				
 				</select>
 			</div>
@@ -431,6 +431,9 @@ func (u *BookingUsecase) VerifyFirstAvailableBooking() error <span class="cov10"
         b, err := u.bookingRepo.GetAndModify(entity.StatusCreated, entity.StatusPending)
         if err != nil </span><span class="cov0" title="0">{
                 return err
+        }</span>
+        <span class="cov10" title="3">if b == nil </span><span class="cov0" title="0">{
+                return nil
         }</span>
 
         <span class="cov10" title="3">bookingVerifyDTO := dto.BookingVerifyDTO{}

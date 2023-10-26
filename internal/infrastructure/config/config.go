@@ -1,60 +1,46 @@
 package config
 
 import (
-	"os"
-
-	"github.com/spf13/viper"
+	"github.com/kelseyhightower/envconfig"
 )
 
 type (
 	LogConfig struct {
-		Level int
+		Level int `envconfig:"LEVEL" required:"true"`
 	}
 	DBConfig struct {
-		Host     string
-		Port     int
-		Name     string
-		User     string
-		Password string
+		Host     string `envconfig:"HOST" required:"true"`
+		Port     int    `envconfig:"PORT" required:"true"`
+		Name     string `envconfig:"NAME" required:"true"`
+		User     string `envconfig:"USER" required:"true"`
+		Password string `envconfig:"PASSWORD" required:"true"`
 	}
-	LaunchpadAPIConfig struct {
-		ApiBaseUri string
-	}
-	LandpadAPIConfig struct {
-		ApiBaseUri string
+	APIClientConfig struct {
+		ApiBaseUri string `envconfig:"API_BASE_URI" required:"true"`
 	}
 	HTTPServerConfig struct {
-		Port int
-		Mode string
+		Port int    `envconfig:"PORT" required:"true"`
+		Mode string `envconfig:"MODE" required:"true"`
 	}
 	Verifier struct {
-		WorkersCount                int
-		RunWorkersEveryMilliseconds int
+		WorkersCount                int `envconfig:"WORKERS_COUNT" required:"true"`
+		RunWorkersEveryMilliseconds int `envconfig:"RUN_WORKERS_EVERY_MILLISECONDS" required:"true"`
 	}
 
 	RootConfig struct {
-		Log        LogConfig
-		DB         DBConfig
-		Launchpad  LaunchpadAPIConfig
-		Landpad    LandpadAPIConfig
-		HTTPServer HTTPServerConfig
-		Verifier   Verifier
+		Log        LogConfig        `envconfig:"LOG" required:"true"`
+		DB         DBConfig         `envconfig:"DB" required:"true"`
+		Launchpad  APIClientConfig  `envconfig:"LAUNCHPAD" required:"true"`
+		Landpad    APIClientConfig  `envconfig:"LANDPAD" required:"true"`
+		HTTPServer HTTPServerConfig `envconfig:"HTTP_SERVER" required:"true"`
+		Verifier   Verifier         `envconfig:"VERIFIER" required:"true"`
 	}
 )
 
 func GetRootConfig() RootConfig {
-	viper.SetConfigFile(os.Getenv("CONFIG_FILE"))
-
-	err := viper.ReadInConfig()
-	if err != nil {
-		panic(err)
+	cfg := &RootConfig{}
+	if err := envconfig.Process("", cfg); err != nil {
+		panic("Configuration error: " + err.Error())
 	}
-
-	cfg := RootConfig{}
-	err = viper.Unmarshal(&cfg)
-	if err != nil {
-		panic(err)
-	}
-
-	return cfg
+	return *cfg
 }

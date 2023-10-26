@@ -3,32 +3,33 @@ version: '3.4'
 services:
   api:
     build:
-      context: .
-      dockerfile: docker/api/Dockerfile
+      context: ./../..
+      dockerfile: ./docker/api/Dockerfile
     restart: "no"
-    volumes:
-      - ./internal/infrastructure/config/config.yml:/app/config.yml
-    environment:
-      CONFIG_FILE: "/app/config.yml"
+    env_file:
+      - ./../../deployments/docker-compose/.env
     depends_on:
       - "db"
+    volumes:
+      - ./../../:/app
     ports:
       - "8080:8080"
-    entrypoint: bash -c 'while !</dev/tcp/db/5432; do sleep 1; done; /app/api'
+    entrypoint: bash -c 'while !</dev/tcp/db/5432; do sleep 1; done; go run /app/cmd/api/main.go'
   verifier:
     build:
-      context: .
-      dockerfile: docker/verifier/Dockerfile
+      context: ./../..
+      dockerfile: ./docker/verifier/Dockerfile
     restart: "no"
-    volumes:
-      - ./internal/infrastructure/config/config.yml:/app/config.yml
-    environment:
-      CONFIG_FILE: "/app/config.yml"
+    env_file:
+      - ./../../deployments/docker-compose/.env
     depends_on:
       - "db"
-    entrypoint: bash -c 'while !</dev/tcp/db/5432; do sleep 1; done; /app/verifier'
+    volumes:
+      - ./../../:/app
+    entrypoint: bash -c 'while !</dev/tcp/db/5432; do sleep 1; done; go run /app/cmd/verifier/main.go'
   swagger-ui:
     image: swaggerapi/swagger-ui:v3.51.1
+    restart: always
     environment:
       - >
         API_URLS=[
@@ -38,8 +39,7 @@ services:
            }
         ]
     volumes:
-      - ./api:/usr/share/nginx/html/spec
-    restart: always
+      - ./../../api:/usr/share/nginx/html/spec
     ports:
       - "8085:8080"
   db:
