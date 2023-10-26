@@ -1,0 +1,28 @@
+version: 1
+threshold:
+  coverage: 0
+dependenciesRules:
+  # Clean architecture dependency rules
+  - package: "**.internal/entity.**"
+    shouldOnlyDependsOn:
+      internal:
+          - "**.internal/entity.**"
+          - "**.pkg/util.**"
+  - package: "**.internal/usecase.**"
+    shouldOnlyDependsOn:
+      internal:
+          - "**.internal/entity.**"
+          - "**.internal/usecase.**"
+          - "**.pkg/util.**"
+  - package: "**.internal/adapter.**"
+    shouldOnlyDependsOn:
+      internal:
+          - "**.internal/entity.**"
+          - "**.internal/usecase.**"
+          - "**.internal/adapter.**"
+          - "**.pkg/util.**"
+  # pkg - should be considered like an external library (to make the rules better, the commonComponents keyword should be used and the linter should be changed to https://github.com/fe3dback/go-arch-lint/blob/v1.11.0/README.md?plain=1#L26-L27)
+  - package: "**.pkg.**"
+    shouldNotDependsOn:
+      internal:
+        - "**.internal.**"

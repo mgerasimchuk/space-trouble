@@ -16,7 +16,7 @@ import (
 	"github.com/sirupsen/logrus"
 
 	"github.com/mgerasimchuk/space-trouble/internal/adapter/repository/pg"
-	"github.com/mgerasimchuk/space-trouble/internal/domain/service"
+	"github.com/mgerasimchuk/space-trouble/internal/entity/service"
 	"github.com/mgerasimchuk/space-trouble/internal/usecase"
 )
 

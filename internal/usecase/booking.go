@@ -2,13 +2,12 @@ package usecase
 
 import (
 	"errors"
-	"github.com/mgerasimchuk/space-trouble/internal/domain/service"
-	"github.com/mgerasimchuk/space-trouble/internal/domain/service/dto"
+	"github.com/mgerasimchuk/space-trouble/internal/entity"
+	"github.com/mgerasimchuk/space-trouble/internal/entity/service"
+	"github.com/mgerasimchuk/space-trouble/internal/entity/service/dto"
 	"github.com/mgerasimchuk/space-trouble/internal/usecase/repository"
 	"golang.org/x/sync/errgroup"
 	"time"
-
-	"github.com/mgerasimchuk/space-trouble/internal/domain/model"
 )
 
 type BookingUsecase struct {
@@ -27,8 +26,8 @@ var internalError = errors.New("internal error")
 func (u *BookingUsecase) CreateBooking(
 	firstName string, lastName string, gender string, birthday time.Time,
 	launchpadID string, destinationID string, launchDate time.Time,
-) (*model.Booking, error) {
-	b := model.CreateBooking(firstName, lastName, gender, birthday, launchpadID, destinationID, launchDate)
+) (*entity.Booking, error) {
+	b := entity.CreateBooking(firstName, lastName, gender, birthday, launchpadID, destinationID, launchDate)
 	if err := b.Validate(); err != nil {
 		return nil, err
 	}
@@ -41,7 +40,7 @@ func (u *BookingUsecase) CreateBooking(
 	return b, nil
 }
 
-func (u *BookingUsecase) GetBookings(limit, offset *int) ([]*model.Booking, error) {
+func (u *BookingUsecase) GetBookings(limit, offset *int) ([]*entity.Booking, error) {
 	if limit != nil && *limit < 1 {
 		return nil, errors.New("\"limit\" param should be greater than 1")
 	}
@@ -71,7 +70,7 @@ func (u *BookingUsecase) DeleteBooking(id string) error {
 }
 
 func (u *BookingUsecase) VerifyFirstAvailableBooking() error {
-	b, err := u.bookingRepo.GetAndModify(model.StatusCreated, model.StatusPending)
+	b, err := u.bookingRepo.GetAndModify(entity.StatusCreated, entity.StatusPending)
 	if err != nil {
 		return err
 	}
@@ -100,7 +99,7 @@ func (u *BookingUsecase) VerifyFirstAvailableBooking() error {
 	})
 
 	if err = g.Wait(); err != nil {
-		b.SetStatus(model.StatusDeclined)
+		b.SetStatus(entity.StatusDeclined)
 		b.SetStatusReason("Unknown reason") // hide errors from the adapters layer
 		return err
 	}

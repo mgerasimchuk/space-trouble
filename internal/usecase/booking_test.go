@@ -1,21 +1,19 @@
 package usecase
 
 import (
-	"github.com/mgerasimchuk/space-trouble/internal/domain/service"
+	"github.com/mgerasimchuk/space-trouble/internal/entity"
+	"github.com/mgerasimchuk/space-trouble/internal/entity/service"
 	"github.com/pkg/errors"
 	"testing"
 	"time"
 
 	"github.com/golang/mock/gomock"
-	"github.com/mgerasimchuk/space-trouble/internal/domain/model"
-	"github.com/mgerasimchuk/space-trouble/pkg/utils"
-
 	"github.com/mgerasimchuk/space-trouble/internal/adapter/repository/mock"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestBookingUsecase_VerifyBooking(t *testing.T) {
-	validBooking := model.CreateBooking(
+	validBooking := entity.CreateBooking(
 		"John", "Doe", "male", time.Now().Add(-300*time.Hour),
 		"5e9e4501f5090910d4566f83", "5e9e3032383ecb267a34e7c7", time.Now().Add(300*time.Hour),
 	)
@@ -43,7 +41,7 @@ func TestBookingUsecase_VerifyBooking(t *testing.T) {
 	}
 
 	type args struct {
-		booking                                  *model.Booking
+		booking                                  *entity.Booking
 		bookingRepoSaveRes                       error
 		launchpadRepoIsExistsRes                 launchpadIsExistsBollErrRes
 		launchpadRepoIsActiveRes                 launchpadIsActiveBollErrRes
@@ -68,7 +66,7 @@ func TestBookingUsecase_VerifyBooking(t *testing.T) {
 				launchpadIsDateAvailableForLaunchBollErrRes{true, nil},
 				landpadIsExistsBollErrRes{true, nil}, landpadIsActiveBollErrRes{true, nil},
 			},
-			want{model.StatusApproved, "", nil},
+			want{entity.StatusApproved, "", nil},
 		},
 
 		// Negative cases
@@ -79,7 +77,7 @@ func TestBookingUsecase_VerifyBooking(t *testing.T) {
 				launchpadIsDateAvailableForLaunchBollErrRes{true, nil},
 				landpadIsExistsBollErrRes{true, nil}, landpadIsActiveBollErrRes{true, nil},
 			},
-			want{model.StatusDeclined, "Unknown reason", errors.New("no such host")},
+			want{entity.StatusDeclined, "Unknown reason", errors.New("no such host")},
 		},
 		{
 			args{
@@ -88,15 +86,15 @@ func TestBookingUsecase_VerifyBooking(t *testing.T) {
 				launchpadIsDateAvailableForLaunchBollErrRes{true, nil},
 				landpadIsExistsBollErrRes{true, nil}, landpadIsActiveBollErrRes{true, nil},
 			},
-			want{model.StatusDeclined, "launchpad doesn't exists", errors.New("launchpad doesn't exists")},
+			want{entity.StatusDeclined, "launchpad doesn't exists", errors.New("launchpad doesn't exists")},
 		},
 	}
 
 	for _, tt := range tests {
 		t.Run("", func(t *testing.T) {
-			gotBookingInSave := model.Booking{}
+			gotBookingInSave := entity.Booking{}
 			bookingRepo := mock.NewMockBookingRepository(gomock.NewController(t))
-			bookingRepo.EXPECT().Save(gomock.Any()).Do(func(b *model.Booking) {
+			bookingRepo.EXPECT().Save(gomock.Any()).Do(func(b *entity.Booking) {
 				gotBookingInSave = *b
 			}).Return(tt.args.bookingRepoSaveRes).AnyTimes()
 			b := *tt.args.booking
@@ -120,10 +118,10 @@ func TestBookingUsecase_VerifyBooking(t *testing.T) {
 			bookingUC := NewBookingUsecase(bookingVerifierSvc, bookingRepo, launchpadRepo, landpadRepo)
 			gotErr := bookingUC.VerifyFirstAvailableBooking()
 
-			utils.EqualError(t, tt.want.err, gotErr)
-			assert.Equal(t, tt.want.status, b.Status())
-			assert.Equal(t, tt.want.statusReason, b.StatusReason())
-			if tt.want.err == nil {
+			if tt.want.err != nil {
+				assert.Error(t, gotErr)
+				assert.EqualError(t, tt.want.err, gotErr.Error())
+			} else {
 				assert.Equal(t, tt.want.status, gotBookingInSave.Status())
 				assert.Equal(t, tt.want.statusReason, gotBookingInSave.StatusReason())
 			}

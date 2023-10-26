@@ -3,7 +3,7 @@
 <html>
 	<head>
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-		<title>model: Go Coverage Report</title>
+		<title>entity: Go Coverage Report</title>
 		<style>
 			body {
 				background: black;
@@ -55,9 +55,9 @@
 			<div id="nav">
 				<select id="files">
 				
-				<option value="file0">github.com/mgerasimchuk/space-trouble/internal/domain/model/booking.go (81.8%)</option>
+				<option value="file0">github.com/mgerasimchuk/space-trouble/internal/entity/booking.go (81.8%)</option>
 				
-				<option value="file1">github.com/mgerasimchuk/space-trouble/internal/domain/service/booking_verifier.go (100.0%)</option>
+				<option value="file1">github.com/mgerasimchuk/space-trouble/internal/entity/service/booking_verifier.go (100.0%)</option>
 				
 				<option value="file2">github.com/mgerasimchuk/space-trouble/internal/usecase/booking.go (56.0%)</option>
 				
@@ -82,7 +82,7 @@
 		</div>
 		<div id="content">
 		
-		<pre class="file" id="file0" style="display: none">package model
+		<pre class="file" id="file0" style="display: none">package entity
 
 import (
         "errors"
@@ -306,8 +306,8 @@ func (b Booking) validateLaunchDate() error <span class="cov3" title="2">{
 		<pre class="file" id="file1" style="display: none">package service
 
 import (
-        "github.com/mgerasimchuk/space-trouble/internal/domain/model"
-        "github.com/mgerasimchuk/space-trouble/internal/domain/service/dto"
+        "github.com/mgerasimchuk/space-trouble/internal/entity"
+        "github.com/mgerasimchuk/space-trouble/internal/entity/service/dto"
         "github.com/pkg/errors"
 )
 
@@ -318,39 +318,39 @@ func NewBookingVerifierService() *BookingVerifierService <span class="cov1" titl
         return &amp;BookingVerifierService{}
 }</span>
 
-func (s BookingVerifierService) Verify(b *model.Booking, dto dto.BookingVerifyDTO) error <span class="cov10" title="6">{
+func (s BookingVerifierService) Verify(b *entity.Booking, dto dto.BookingVerifyDTO) error <span class="cov10" title="6">{
         if !dto.IsLaunchpadExists </span><span class="cov1" title="1">{
-                b.SetStatus(model.StatusDeclined)
+                b.SetStatus(entity.StatusDeclined)
                 err := errors.New("launchpad doesn't exists")
                 b.SetStatusReason(err.Error())
                 return err
         }</span>
         <span class="cov9" title="5">if !dto.IsLaunchpadActive </span><span class="cov1" title="1">{
-                b.SetStatus(model.StatusDeclined)
+                b.SetStatus(entity.StatusDeclined)
                 err := errors.New("launchpad is not active")
                 b.SetStatusReason(err.Error())
                 return err
         }</span>
         <span class="cov7" title="4">if !dto.IsDateAvailableForLaunch </span><span class="cov1" title="1">{
-                b.SetStatus(model.StatusDeclined)
+                b.SetStatus(entity.StatusDeclined)
                 err := errors.New("booking date is not available")
                 b.SetStatusReason(err.Error())
                 return err
         }</span>
         <span class="cov6" title="3">if !dto.IsLandpadExists </span><span class="cov1" title="1">{
-                b.SetStatus(model.StatusDeclined)
+                b.SetStatus(entity.StatusDeclined)
                 err := errors.New("landpad doesn't exists")
                 b.SetStatusReason(err.Error())
                 return err
         }</span>
         <span class="cov4" title="2">if !dto.IsLandpadActive </span><span class="cov1" title="1">{
-                b.SetStatus(model.StatusDeclined)
+                b.SetStatus(entity.StatusDeclined)
                 err := errors.New("landpad is not active")
                 b.SetStatusReason(err.Error())
                 return err
         }</span>
 
-        <span class="cov1" title="1">b.SetStatus(model.StatusApproved)
+        <span class="cov1" title="1">b.SetStatus(entity.StatusApproved)
         b.SetStatusReason("")
         return nil</span>
 }
@@ -360,13 +360,12 @@ func (s BookingVerifierService) Verify(b *model.Booking, dto dto.BookingVerifyDT
 
 import (
         "errors"
-        "github.com/mgerasimchuk/space-trouble/internal/domain/service"
-        "github.com/mgerasimchuk/space-trouble/internal/domain/service/dto"
+        "github.com/mgerasimchuk/space-trouble/internal/entity"
+        "github.com/mgerasimchuk/space-trouble/internal/entity/service"
+        "github.com/mgerasimchuk/space-trouble/internal/entity/service/dto"
         "github.com/mgerasimchuk/space-trouble/internal/usecase/repository"
         "golang.org/x/sync/errgroup"
         "time"
-
-        "github.com/mgerasimchuk/space-trouble/internal/domain/model"
 )
 
 type BookingUsecase struct {
@@ -385,8 +384,8 @@ var internalError = errors.New("internal error")
 func (u *BookingUsecase) CreateBooking(
         firstName string, lastName string, gender string, birthday time.Time,
         launchpadID string, destinationID string, launchDate time.Time,
-) (*model.Booking, error) <span class="cov0" title="0">{
-        b := model.CreateBooking(firstName, lastName, gender, birthday, launchpadID, destinationID, launchDate)
+) (*entity.Booking, error) <span class="cov0" title="0">{
+        b := entity.CreateBooking(firstName, lastName, gender, birthday, launchpadID, destinationID, launchDate)
         if err := b.Validate(); err != nil </span><span class="cov0" title="0">{
                 return nil, err
         }</span>
@@ -399,7 +398,7 @@ func (u *BookingUsecase) CreateBooking(
         <span class="cov0" title="0">return b, nil</span>
 }
 
-func (u *BookingUsecase) GetBookings(limit, offset *int) ([]*model.Booking, error) <span class="cov0" title="0">{
+func (u *BookingUsecase) GetBookings(limit, offset *int) ([]*entity.Booking, error) <span class="cov0" title="0">{
         if limit != nil &amp;&amp; *limit &lt; 1 </span><span class="cov0" title="0">{
                 return nil, errors.New("\"limit\" param should be greater than 1")
         }</span>
@@ -429,7 +428,7 @@ func (u *BookingUsecase) DeleteBooking(id string) error <span class="cov0" title
 }
 
 func (u *BookingUsecase) VerifyFirstAvailableBooking() error <span class="cov10" title="3">{
-        b, err := u.bookingRepo.GetAndModify(model.StatusCreated, model.StatusPending)
+        b, err := u.bookingRepo.GetAndModify(entity.StatusCreated, entity.StatusPending)
         if err != nil </span><span class="cov0" title="0">{
                 return err
         }</span>
@@ -458,7 +457,7 @@ func (u *BookingUsecase) VerifyFirstAvailableBooking() error <span class="cov10"
         }</span>)
 
         <span class="cov10" title="3">if err = g.Wait(); err != nil </span><span class="cov1" title="1">{
-                b.SetStatus(model.StatusDeclined)
+                b.SetStatus(entity.StatusDeclined)
                 b.SetStatusReason("Unknown reason") // hide errors from the adapters layer
                 return err
         }</span>

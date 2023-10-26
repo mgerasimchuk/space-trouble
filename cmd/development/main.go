@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"github.com/mgerasimchuk/space-trouble/internal/entity"
 	repository2 "github.com/mgerasimchuk/space-trouble/internal/usecase/repository"
 	"os"
 	"time"
@@ -12,8 +13,7 @@ import (
 	_ "github.com/jinzhu/gorm/dialects/postgres"
 	"github.com/mgerasimchuk/space-trouble/internal/adapter/repository/api"
 	"github.com/mgerasimchuk/space-trouble/internal/adapter/repository/pg"
-	"github.com/mgerasimchuk/space-trouble/internal/domain/model"
-	"github.com/mgerasimchuk/space-trouble/internal/domain/service"
+	"github.com/mgerasimchuk/space-trouble/internal/entity/service"
 	"github.com/mgerasimchuk/space-trouble/internal/usecase"
 	"github.com/sirupsen/logrus"
 )
@@ -55,11 +55,11 @@ func main() {
 
 func examplesBookingRepo(bookingRepo repository2.BookingRepository) {
 	p := gofakeit.Person()
-	b1 := model.CreateBooking(p.FirstName, p.LastName, p.Gender, gofakeit.Date(), uuid.New().String(), uuid.New().String(), gofakeit.Date())
+	b1 := entity.CreateBooking(p.FirstName, p.LastName, p.Gender, gofakeit.Date(), uuid.New().String(), uuid.New().String(), gofakeit.Date())
 	b1, err := bookingRepo.Create(b1)
 	fmt.Printf("After Create First\nBooking: %#v\nError: %#v\n\n", b1, err)
 
-	b1.SetStatus(model.StatusDeclined)
+	b1.SetStatus(entity.StatusDeclined)
 	err = bookingRepo.Save(b1)
 	fmt.Printf("After Update First\nBooking: %#v\nError: %#v\n\n", b1, err)
 
@@ -67,17 +67,17 @@ func examplesBookingRepo(bookingRepo repository2.BookingRepository) {
 	fmt.Printf("Bookings: %#v\nError: %#v\n\n", bookings, err)
 
 	p = gofakeit.Person()
-	b2 := model.CreateBooking(p.FirstName, p.LastName, p.Gender, gofakeit.Date(), uuid.New().String(), uuid.New().String(), gofakeit.Date())
+	b2 := entity.CreateBooking(p.FirstName, p.LastName, p.Gender, gofakeit.Date(), uuid.New().String(), uuid.New().String(), gofakeit.Date())
 	b2, err = bookingRepo.Create(b2)
 	fmt.Printf("After Create Second\nBooking: %#v\nError: %#v\n\n", b2, err)
 
-	b2, err = bookingRepo.GetAndModify(model.StatusCreated, model.StatusPending)
+	b2, err = bookingRepo.GetAndModify(entity.StatusCreated, entity.StatusPending)
 	fmt.Printf("After GetAndModify\nBooking: %#v\nError: %#v\n\n", b2, err)
 
 	bookings, err = bookingRepo.GetList(nil, nil, nil)
 	fmt.Printf("Bookings (all): %#v\nError: %#v\n\n", bookings, err)
 
-	status := model.StatusPending
+	status := entity.StatusPending
 	bookings, err = bookingRepo.GetList(&status, nil, nil)
 	fmt.Printf("Bookings (pending): %#v\nError: %#v\n\n", bookings, err)
 

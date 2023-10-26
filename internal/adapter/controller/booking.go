@@ -1,13 +1,13 @@
 package controller
 
 import (
+	"github.com/mgerasimchuk/space-trouble/internal/entity"
 	"net/http"
 	"strconv"
 
 	"github.com/gin-gonic/gin"
-	"github.com/mgerasimchuk/space-trouble/internal/domain/model"
 	"github.com/mgerasimchuk/space-trouble/internal/usecase"
-	"github.com/mgerasimchuk/space-trouble/pkg/utils"
+	"github.com/mgerasimchuk/space-trouble/pkg/util"
 	"github.com/sirupsen/logrus"
 )
 
@@ -100,19 +100,19 @@ func (c *BookingController) DeleteBooking(ctx *gin.Context) {
 }
 
 type booking struct {
-	ID            string     `json:"id"`
-	Status        string     `json:"status"`
-	StatusReason  string     `json:"statusReason"`
-	FirstName     string     `json:"firstName" binding:"required"`
-	LastName      string     `json:"lastName" binding:"required"`
-	Gender        string     `json:"gender" binding:"required"`
-	Birthday      utils.Date `json:"birthday" binding:"required"`
-	LaunchpadID   string     `json:"launchpadId" binding:"required"`
-	DestinationID string     `json:"destinationId" binding:"required"`
-	LaunchDate    utils.Date `json:"launchDate" binding:"required"`
+	ID            string    `json:"id"`
+	Status        string    `json:"status"`
+	StatusReason  string    `json:"statusReason"`
+	FirstName     string    `json:"firstName" binding:"required"`
+	LastName      string    `json:"lastName" binding:"required"`
+	Gender        string    `json:"gender" binding:"required"`
+	Birthday      util.Date `json:"birthday" binding:"required"`
+	LaunchpadID   string    `json:"launchpadId" binding:"required"`
+	DestinationID string    `json:"destinationId" binding:"required"`
+	LaunchDate    util.Date `json:"launchDate" binding:"required"`
 }
 
-func fromDomainBooking(b *model.Booking) *booking {
+func fromDomainBooking(b *entity.Booking) *booking {
 	return &booking{
 		ID:            b.ID(),
 		Status:        b.Status(),
@@ -120,9 +120,9 @@ func fromDomainBooking(b *model.Booking) *booking {
 		FirstName:     b.FirstName(),
 		LastName:      b.LastName(),
 		Gender:        b.Gender(),
-		Birthday:      utils.Date{Time: b.Birthday()},
+		Birthday:      util.Date{Time: b.Birthday()},
 		LaunchpadID:   b.LaunchpadID(),
 		DestinationID: b.DestinationID(),
-		LaunchDate:    utils.Date{Time: b.LaunchDate()},
+		LaunchDate:    util.Date{Time: b.LaunchDate()},
 	}
 }

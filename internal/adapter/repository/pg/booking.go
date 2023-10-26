@@ -2,12 +2,12 @@ package pg
 
 import (
 	"fmt"
+	"github.com/mgerasimchuk/space-trouble/internal/entity"
 	"github.com/mgerasimchuk/space-trouble/internal/usecase/repository"
 	"time"
 
 	"github.com/google/uuid"
 	"github.com/jinzhu/gorm"
-	"github.com/mgerasimchuk/space-trouble/internal/domain/model"
 )
 
 type BookingRepository struct {
@@ -20,20 +20,20 @@ func NewBookingRepository(db *gorm.DB) *BookingRepository {
 	return &BookingRepository{db: db}
 }
 
-func (r *BookingRepository) Create(domainBooking *model.Booking) (*model.Booking, error) {
+func (r *BookingRepository) Create(domainBooking *entity.Booking) (*entity.Booking, error) {
 	domainBooking.SetID(uuid.New().String())
 	b := fromDomainBooking(domainBooking)
 
 	return domainBooking, r.db.Create(b).Error
 }
 
-func (r *BookingRepository) Save(domainBooking *model.Booking) error {
+func (r *BookingRepository) Save(domainBooking *entity.Booking) error {
 	b := fromDomainBooking(domainBooking)
 
 	return r.db.Save(b).Error
 }
 
-func (r *BookingRepository) GetList(status *string, limit, offset *int) ([]*model.Booking, error) {
+func (r *BookingRepository) GetList(status *string, limit, offset *int) ([]*entity.Booking, error) {
 	var bookings []*booking
 
 	query := r.db
@@ -55,7 +55,7 @@ func (r *BookingRepository) GetList(status *string, limit, offset *int) ([]*mode
 		return nil, err
 	}
 
-	var domainBookings []*model.Booking
+	var domainBookings []*entity.Booking
 
 	for i := range bookings {
 		domainBookings = append(domainBookings, toDomainBooking(bookings[i]))
@@ -68,7 +68,7 @@ func (r *BookingRepository) Delete(id string) error {
 	return r.db.Where("id = ?", id).Delete(&booking{}).Error
 }
 
-func (r *BookingRepository) GetAndModify(searchStatus, modifyStatus string) (*model.Booking, error) {
+func (r *BookingRepository) GetAndModify(searchStatus, modifyStatus string) (*entity.Booking, error) {
 	res := r.db.Raw(fmt.Sprintf(`
 UPDATE %s
 SET status = '%s'
@@ -109,7 +109,7 @@ type booking struct {
 	LaunchDate    time.Time `gorm:"column:launch_date"`
 }
 
-func fromDomainBooking(b *model.Booking) *booking {
+func fromDomainBooking(b *entity.Booking) *booking {
 	return &booking{
 		ID:            b.ID(),
 		Status:        b.Status(),
@@ -124,8 +124,8 @@ func fromDomainBooking(b *model.Booking) *booking {
 	}
 }
 
-func toDomainBooking(b *booking) *model.Booking {
-	return model.LoadBooking(
+func toDomainBooking(b *booking) *entity.Booking {
+	return entity.LoadBooking(
 		b.ID, b.Status, b.StatusReason, b.FirstName, b.LastName, b.Gender,
 		b.Birthday, b.LaunchpadID, b.DestinationID, b.LaunchDate,
 	)

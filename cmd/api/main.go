@@ -16,10 +16,10 @@ import (
 	"github.com/mgerasimchuk/space-trouble/internal/adapter/controller"
 	"github.com/mgerasimchuk/space-trouble/internal/adapter/repository/api"
 	"github.com/mgerasimchuk/space-trouble/internal/adapter/repository/pg"
-	"github.com/mgerasimchuk/space-trouble/internal/domain/service"
+	"github.com/mgerasimchuk/space-trouble/internal/entity/service"
 	"github.com/mgerasimchuk/space-trouble/internal/infrastructure/config"
 	"github.com/mgerasimchuk/space-trouble/internal/usecase"
-	"github.com/mgerasimchuk/space-trouble/pkg/utils"
+	"github.com/mgerasimchuk/space-trouble/pkg/util"
 	"github.com/sirupsen/logrus"
 	"github.com/toorop/gin-logrus"
 )
@@ -50,7 +50,7 @@ func main() {
 	gin.SetMode(cfg.HTTPServer.Mode)
 	router := gin.Default()
 	router.Use(ginlogrus.Logger(logger), gin.Recovery())
-	router.Use(utils.RequestLogger(logger))
+	router.Use(util.RequestLogger(logger))
 
 	router.POST("/v1/bookings", bookingController.CreateBooking)
 	router.GET("/v1/bookings", bookingController.GetBookings)

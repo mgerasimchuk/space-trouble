@@ -32,7 +32,7 @@ curl --location --request POST 'localhost:8080/v1/bookings' \
   "birthday": "2021-01-31",
   "launchpadId": "5e9e4501f509094ba4566f84",
   "destinationId": "5e9e3032383ecb761634e7cb",
-  "launchDate": "2021-09-25"
+  "launchDate": "2031-09-25"
 }'
 ```
 
