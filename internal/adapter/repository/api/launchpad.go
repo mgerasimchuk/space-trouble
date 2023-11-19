@@ -1,107 +1,76 @@
 package api
 
 import (
-	"bytes"
-	"encoding/json"
 	"fmt"
-	"io"
-	"log"
+	"github.com/go-resty/resty/v2"
+	"github.com/tidwall/gjson"
 	"net/http"
 	"time"
 )
 
 type LaunchpadRepository struct {
-	apiBaseUri string
+	client *resty.Client
 }
 
 const launchpadActiveStatus = "active"
 
-func NewLaunchpadRepository(apiBaseUri string) *LaunchpadRepository {
-	return &LaunchpadRepository{apiBaseUri: apiBaseUri}
+func NewLaunchpadRepository(apiBaseURL string) *LaunchpadRepository {
+	return &LaunchpadRepository{
+		client: resty.New().
+			SetBaseURL(apiBaseURL).
+			SetHeader("Content-Type", "application/json"),
+	}
 }
 
 func (r *LaunchpadRepository) IsExists(id string) (bool, error) {
-	_, statusCode, err := r.getLaunchpad(id)
+	resp, err := r.client.R().
+		SetPathParam("launchpadId", id).
+		Get("/v4/launchpads/{launchpadId}")
 	if err != nil {
 		return false, err
 	}
-
-	return statusCode == http.StatusOK, nil
+	if resp.StatusCode() != http.StatusOK && resp.StatusCode() != http.StatusNotFound {
+		return false, fmt.Errorf("got unexpected http status code: %d", resp.StatusCode())
+	}
+	return resp.StatusCode() == http.StatusOK, nil
 }
 
 func (r *LaunchpadRepository) IsActive(id string) (bool, error) {
-	lp, _, err := r.getLaunchpad(id)
+	resp, err := r.client.R().
+		SetPathParam("launchpadId", id).
+		Get("/v4/launchpads/{launchpadId}")
 	if err != nil {
 		return false, err
 	}
+	if resp.StatusCode() != http.StatusOK && resp.StatusCode() != http.StatusNotFound {
+		return false, fmt.Errorf("got unexpected http status code: %d", resp.StatusCode())
+	}
 
-	return lp.Status == launchpadActiveStatus, nil
+	respData := gjson.ParseBytes(resp.Body())
+	return respData.Get("Status").String() == launchpadActiveStatus, nil
 }
 
 func (r *LaunchpadRepository) IsDateAvailableForLaunch(launchpadID string, launchDate time.Time) (bool, error) {
-	requestBody := fmt.Sprintf(`
-{
-  "query": {
-      "launchpad": "%s",
-      "$and": [{"date_utc": {"$gte": "%s"}}, {"date_utc": {"$lt": "%s"}}]
-  }
-}
-`, launchpadID, launchDate.Format(time.RFC3339), launchDate.Add(24*time.Hour).Format(time.RFC3339))
-
-	resp, err := http.Post(fmt.Sprintf("%s/v4/launches/query", r.apiBaseUri), "application/json", bytes.NewBuffer([]byte(requestBody)))
+	resp, err := r.client.R().SetBody(map[string]any{
+		"query": map[string]any{
+			"launchpad": launchpadID,
+			"$and": []map[string]any{
+				{
+					"date_utc": map[string]any{"$gte": launchDate.Format(time.RFC3339)},
+				},
+				{
+					"date_utc": map[string]any{"$lt": launchDate.Add(24 * time.Hour).Format(time.RFC3339)},
+				},
+			},
+		},
+	}).Post("/v4/launches/query")
 	if err != nil {
 		return false, err
 	}
-	defer resp.Body.Close()
-
-	if resp.StatusCode != http.StatusOK {
-		return false, fmt.Errorf("got unexpected http status code: %d", resp.StatusCode)
+	if resp.StatusCode() != http.StatusOK {
+		return false, fmt.Errorf("got unexpected http status code: %d", resp.StatusCode())
 	}
 
-	body, err := io.ReadAll(resp.Body)
-	if err != nil {
-		log.Fatalln(err)
-	}
-
-	lqr := launchesQueryResult{}
-	err = json.Unmarshal(body, &lqr)
-	if err != nil {
-		return false, err
-	}
-
-	return lqr.TotalDocs == 0, nil
-}
-
-func (r *LaunchpadRepository) getLaunchpad(id string) (lp *launchpad, statusCode int, err error) {
-	resp, err := http.Get(fmt.Sprintf("%s/v4/launchpads/%s", r.apiBaseUri, id))
-
-	if err != nil {
-		return nil, 0, err
-	}
-	defer resp.Body.Close()
-
-	if resp.StatusCode != http.StatusOK && resp.StatusCode != http.StatusNotFound {
-		return nil, resp.StatusCode, fmt.Errorf("got unexpected http status code: %d", resp.StatusCode)
-	}
-
-	body, err := io.ReadAll(resp.Body)
-	if err != nil {
-		log.Fatalln(err)
-	}
-
-	lp = new(launchpad)
-	err = json.Unmarshal(body, lp)
-	if err != nil {
-		return lp, resp.StatusCode, err
-	}
-
-	return lp, resp.StatusCode, nil
-}
-
-type launchpad struct {
-	Status string
-}
-
-type launchesQueryResult struct {
-	TotalDocs int
+	respData := gjson.ParseBytes(resp.Body())
+	return respData.Get("TotalDocs").Int() == 0, nil
 }

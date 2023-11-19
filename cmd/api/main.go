@@ -43,8 +43,8 @@ func main() {
 	}
 
 	bookingRepo := pg.NewBookingRepository(db)
-	launchpadRepo := api.NewLaunchpadRepository(cfg.Launchpad.ApiBaseUri)
-	landpadRepo := api.NewLandpadRepository(cfg.Landpad.ApiBaseUri)
+	launchpadRepo := api.NewLaunchpadRepository(cfg.Launchpad.APIBaseURL)
+	landpadRepo := api.NewLandpadRepository(cfg.Landpad.APIBaseURL)
 	bookingService := service.NewBookingVerifierService()
 	bookingUsecase := usecase.NewBookingUsecase(bookingService, bookingRepo, launchpadRepo, landpadRepo)
 	bookingController := controller.NewBookingController(bookingUsecase, logger)

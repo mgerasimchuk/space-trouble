@@ -16,7 +16,7 @@ type (
 		Password string `envconfig:"PASSWORD" required:"true"`
 	}
 	APIClientConfig struct {
-		ApiBaseUri string `envconfig:"API_BASE_URI" required:"true"`
+		APIBaseURL string `envconfig:"API_BASE_URL" required:"true"`
 	}
 	HTTPServerConfig struct {
 		Port int    `envconfig:"PORT" required:"true"`
