@@ -8,19 +8,31 @@ import (
 	"time"
 )
 
-func Test_Bookings_POST__EmptyBody_ValidationError(t *testing.T) {
+func Test_Bookings_POST__EmptyBodyValidationError(t *testing.T) {
 	getExpect(t).POST("/v1/bookings").
 		WithJSON(map[string]string{}).
 		Expect().
 		Status(http.StatusBadRequest).
-		JSON().Object().Value("error").NotNull()
+		JSON().Object().Value("error").String().Contains("required")
+}
+
+func Test_Bookings_POST_LaunchDateInPastValidationError(t *testing.T) {
+	getExpect(t).POST("/v1/bookings").
+		WithJSON(map[string]string{
+			"firstName":     faker.FirstName(),
+			"lastName":      faker.LastName(),
+			"gender":        faker.Gender(),
+			"birthday":      "1982-10-27",
+			"launchpadId":   "5e9e4501f509094ba4566f84",
+			"destinationId": "5e9e3032383ecb761634e7cb",
+			"launchDate":    time.Now().Add(-24 * time.Hour).Format(time.DateOnly),
+		}).
+		Expect().
+		Status(http.StatusInternalServerError). // TODO should not be a 5xx - it's 4xx
+		JSON().Object().Value("error").String().Contains(`value of "launchDate" field should be in the future`)
 }
 
 func Test_Bookings_POST__Success(t *testing.T) {
-	t.Parallel()
-	cfg := getConfig()
-	e := httpexpect.Default(t, cfg.ServerURL)
-
 	req := map[string]string{
 		"firstName":     faker.FirstName(),
 		"lastName":      faker.LastName(),
@@ -30,7 +42,7 @@ func Test_Bookings_POST__Success(t *testing.T) {
 		"destinationId": "5e9e3032383ecb761634e7cb",
 		"launchDate":    time.Now().Add(24 * time.Hour).Format(time.DateOnly),
 	}
-	resp := e.POST("/v1/bookings").
+	resp := getExpect(t).POST("/v1/bookings").
 		WithJSON(req).
 		Expect().
 		Status(http.StatusCreated).
@@ -45,9 +57,7 @@ func Test_Bookings_POST__Success(t *testing.T) {
 }
 
 func Test_Bookings_Full_Flow__Success(t *testing.T) {
-	t.Parallel()
-	cfg := getConfig()
-	e := httpexpect.Default(t, cfg.ServerURL)
+	e := getExpect(t)
 
 	// Create booking
 	req := map[string]string{
@@ -68,6 +78,7 @@ func Test_Bookings_Full_Flow__Success(t *testing.T) {
 	for _, k := range []string{"id", "status", "statusReason"} {
 		booking.ContainsKey(k)
 	}
+	booking.ContainsSubset(map[string]string{"status": "created", "statusReason": ""})
 	for k, v := range req {
 		booking.Value(k).IsEqual(v)
 	}
