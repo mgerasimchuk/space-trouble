@@ -1,19 +1,15 @@
 package main
 
 import (
-	"github.com/bxcodec/faker/v3"
 	"github.com/gavv/httpexpect/v2"
+	"github.com/go-faker/faker/v4"
 	"net/http"
 	"testing"
 	"time"
 )
 
-func Test_Bookings_POST__ValidationError(t *testing.T) {
-	t.Parallel()
-	cfg := getConfig()
-	e := httpexpect.Default(t, cfg.ServerURL)
-
-	e.POST("/v1/bookings").
+func Test_Bookings_POST__EmptyBody_ValidationError(t *testing.T) {
+	getExpect(t).POST("/v1/bookings").
 		WithJSON(map[string]string{}).
 		Expect().
 		Status(http.StatusBadRequest).

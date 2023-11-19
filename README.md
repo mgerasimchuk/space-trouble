@@ -1,9 +1,12 @@
-[![Lint Golangci][lint-golangci-badge]][lint-golangci-url]
-[![Lint Architecture][lint-architecture-badge]][lint-architecture-url]
-[![Test Unit][test-unit-badge]][test-unit-url]
-[![Test Integration][test-integration-badge]][test-integration-url]
+[![Lint Golangci](https://github.com/mgerasimchuk/space-trouble/actions/workflows/lint-golangci.yml/badge.svg)](https://github.com/mgerasimchuk/space-trouble/actions/workflows/lint-golangci.yml)
+[![Lint Architecture](https://github.com/mgerasimchuk/space-trouble/actions/workflows/lint-architecture.yml/badge.svg)](https://github.com/mgerasimchuk/space-trouble/actions/workflows/lint-architecture.yml)
+[![Test (unit)](https://github.com/mgerasimchuk/space-trouble/actions/workflows/test-unit.yml/badge.svg)](https://github.com/mgerasimchuk/space-trouble/actions/workflows/test-unit.yml)
+[![Coverage (unit)](https://github.com/mgerasimchuk/space-trouble/wiki/assets/coverage/unit/coverage.svg)](https://raw.githack.com/wiki/mgerasimchuk/space-trouble/assets/coverage/unit/coverage.html)
+[![Test (integration)](https://github.com/mgerasimchuk/space-trouble/actions/workflows/test-integration.yml/badge.svg)](https://github.com/mgerasimchuk/space-trouble/actions/workflows/test-integration.yml)
 
 # Space Trouble
+
+Solution for the [Space trouble challenge](#space-trouble-challenge)
 
 ## Requirements
 
@@ -55,39 +58,6 @@ See data in DB:
 docker-compose -f deployments/docker-compose/docker-compose.yaml run migrations-up bash -c 'psql -c "SELECT * FROM bookings"'
 ```
 
-## Tests
-
-### Unit
-
-Run tests with generating html coverage report:
-
-```
-make test-unit
-``` 
-
-After executing, you can open generated [assets/coverage/coverage.html](https://htmlpreview.github.io/?https://raw.githubusercontent.com/mgerasimchuk/space-trouble/master/assets/coverage/coverage.html)
-file in browser for checking coverage
-
-### Integration
-
-```
-make test-integration
-```
-
-## Linters
-
-### Golangci
-
-```
-make lint-golangci
-``` 
-
-### Architecture
-
-```
-make lint-architecture
-```
-
 ## Configuration
 
 See env file: [deployments/docker-compose/.env](deployments/docker-compose/.env)
@@ -97,9 +67,10 @@ See env file: [deployments/docker-compose/.env](deployments/docker-compose/.env)
 As an architectural approach was used
 - [The Clean Architecture](https://blog.cleancoder.com/uncle-bob/2012/08/13/the-clean-architecture.html)
 
-The project layout follows [https://github.com/golang-standards/project-layout](https://github.com/golang-standards/project-layout)
+The project layout follows
+- [https://github.com/golang-standards/project-layout](https://github.com/golang-standards/project-layout)
 
-## Original Technical Task Description
+## Space trouble challenge
 
 Imagine it’s 2049 and you are working for a company called SpaceTrouble that sends people to different places in our
 solar system. You are not the only one working in this industry. Your biggest competitor is a less known company called
@@ -144,12 +115,3 @@ Technical requirements:
 * Please, use github or bitbucket.
 
 * Commit your changes often. Do not push the whole project in one commit.
-
-[lint-golangci-badge]: https://github.com/mgerasimchuk/space-trouble/actions/workflows/lint-golangci.yml/badge.svg
-[lint-golangci-url]: https://github.com/mgerasimchuk/space-trouble/actions/workflows/lint-golangci.yml
-[lint-architecture-badge]: https://github.com/mgerasimchuk/space-trouble/actions/workflows/lint-architecture.yml/badge.svg
-[lint-architecture-url]: https://github.com/mgerasimchuk/space-trouble/actions/workflows/lint-architecture.yml
-[test-unit-badge]: https://github.com/mgerasimchuk/space-trouble/actions/workflows/test-unit.yml/badge.svg
-[test-unit-url]: https://github.com/mgerasimchuk/space-trouble/actions/workflows/test-unit.yml
-[test-integration-badge]: https://github.com/mgerasimchuk/space-trouble/actions/workflows/test-integration.yml/badge.svg
-[test-integration-url]: https://github.com/mgerasimchuk/space-trouble/actions/workflows/test-integration.yml

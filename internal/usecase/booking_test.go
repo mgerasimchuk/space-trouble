@@ -7,9 +7,9 @@ import (
 	"testing"
 	"time"
 
-	"github.com/golang/mock/gomock"
 	"github.com/mgerasimchuk/space-trouble/internal/adapter/repository/mock"
 	"github.com/stretchr/testify/assert"
+	"go.uber.org/mock/gomock"
 )
 
 func TestBookingUsecase_VerifyBooking(t *testing.T) {

@@ -13,7 +13,7 @@ logs-verifier:
 	docker-compose -f ${DOCKER_COMPOSE_FILENAME} logs -f verifier
 test-unit: vendor-install
 	docker run -v $(shell pwd):/app -w /app golang:1.20.0 /bin/bash \
-	-c 'go test -covermode=count -coverprofile=assets/coverage/coverage.out -v ./internal/... && go tool cover -html=assets/coverage/coverage.out -o=assets/coverage/coverage.html'
+	-c 'go test -covermode=count -coverprofile=assets/coverage/unit/coverage.out -v ./internal/... && go tool cover -html=assets/coverage/unit/coverage.out -o=assets/coverage/unit/coverage.html'
 test-integration-api: start
 	if ! docker-compose -f ${DOCKER_COMPOSE_FILENAME} run test-integration-api; then \
 		echo "\nLogs for api from docker-compose:" ;\
@@ -28,5 +28,7 @@ lint-golangci: vendor-install
 lint-architecture:
 	docker run --rm -v $(shell pwd):/app -w /app golang:1.20.0 /bin/bash \
 	-c "go install github.com/fdaines/arch-go@v1.4.2 && arch-go -v"
+generate-go:
+	docker run --rm -v $(shell pwd):/app -w /app golang:1.20.0 /bin/bash -c 'go install go.uber.org/mock/mockgen@v0.3.0 && go generate ./...'
 vendor-install:
 	@if [ -d "vendor" ]; then echo "Vendor folder already exists. Skip vendor installing."; else docker run --rm -v $(shell pwd):/app -w /app golang:1.20.0 /bin/bash -c "go mod tidy && go mod vendor"; fi

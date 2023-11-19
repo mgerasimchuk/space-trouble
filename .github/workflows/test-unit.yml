@@ -1,4 +1,4 @@
-name: Test Unit
+name: Test (unit)
 on: push
 
 jobs:
@@ -8,3 +8,10 @@ jobs:
       - uses: actions/checkout@v3
       - name: Test Unit
         run: make test-unit
+      - name: Coverage report
+        uses: ncruces/go-coverage-report@v0.2.9
+        with:
+          badge-title: Coverage (unit)
+          coverage-file: assets/coverage/unit/coverage.out
+          report: true
+          output-dir: assets/coverage/unit
