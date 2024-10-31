@@ -1,21 +1,21 @@
 package main
 
 import (
+	"github.com/caarlos0/env/v11"
 	"github.com/gavv/httpexpect/v2"
-	"github.com/kelseyhightower/envconfig"
 	"testing"
 )
 
 type config struct {
-	ServerURL string `envconfig:"SERVER_URL" required:"true" default:"http://localhost:8080"`
+	ServerURL string `env:"SERVER_URL" default:"http://localhost:8080"`
 }
 
 func getConfig() *config {
-	cfg := &config{}
-	if err := envconfig.Process("", cfg); err != nil {
+	cfg, err := env.ParseAsWithOptions[config](env.Options{RequiredIfNoDef: true})
+	if err != nil {
 		panic("configuration error: " + err.Error())
 	}
-	return cfg
+	return &cfg
 }
 
 func getExpect(t *testing.T) *httpexpect.Expect {

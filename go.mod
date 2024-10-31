@@ -3,13 +3,13 @@ module github.com/mgerasimchuk/space-trouble
 go 1.20
 
 require (
+	github.com/caarlos0/env/v11 v11.2.2
 	github.com/gavv/httpexpect/v2 v2.16.0
 	github.com/gin-gonic/gin v1.9.1
 	github.com/go-faker/faker/v4 v4.2.0
 	github.com/go-resty/resty/v2 v2.10.0
 	github.com/google/uuid v1.4.0
 	github.com/jinzhu/gorm v1.9.16
-	github.com/kelseyhightower/envconfig v1.4.0
 	github.com/pkg/errors v0.9.1
 	github.com/sirupsen/logrus v1.9.3
 	github.com/stretchr/testify v1.8.4
