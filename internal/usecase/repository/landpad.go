@@ -1,6 +1,6 @@
 package repository
 
-//go:generate mockgen -source=landpad.go -destination=../../adapter/repository/mock/landpad.go -package=mock
+//go:generate mockgen -source=landpad.go -destination=mock/landpad.go -package=mock
 
 type LandpadRepository interface {
 	IsExists(id string) (bool, error)

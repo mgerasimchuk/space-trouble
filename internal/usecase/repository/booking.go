@@ -4,7 +4,7 @@ import (
 	"github.com/mgerasimchuk/space-trouble/internal/entity"
 )
 
-//go:generate mockgen -source=booking.go -destination=../../adapter/repository/mock/booking.go -package=mock
+//go:generate mockgen -source=booking.go -destination=mock/booking.go -package=mock
 
 const DefaultBookingGetListLimit = 20
 

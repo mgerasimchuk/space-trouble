@@ -2,7 +2,7 @@ package repository
 
 import "time"
 
-//go:generate mockgen -source=launchpad.go -destination=../../adapter/repository/mock/launchpad.go -package=mock
+//go:generate mockgen -source=launchpad.go -destination=mock/launchpad.go -package=mock
 
 type LaunchpadRepository interface {
 	IsExists(id string) (bool, error)

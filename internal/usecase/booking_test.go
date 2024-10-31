@@ -7,7 +7,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/mgerasimchuk/space-trouble/internal/adapter/repository/mock"
+	"github.com/mgerasimchuk/space-trouble/internal/usecase/repository/mock"
 	"github.com/stretchr/testify/assert"
 	"go.uber.org/mock/gomock"
 )
