@@ -55,7 +55,7 @@ curl --location --request DELETE 'localhost:8080/v1/bookings/10227205-3628-4c94-
 See data in DB:
 
 ```
-docker-compose -f deployments/docker-compose/docker-compose.yaml run migrations-up bash -c 'psql -c "SELECT * FROM bookings"'
+docker compose -f deployments/docker-compose/docker-compose.yaml run migrations-up bash -c 'psql -c "SELECT * FROM bookings"'
 ```
 
 ## Configuration
